@@ -13,16 +13,20 @@ class GameScene: SKScene {
     
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
+    let backgroundImage = SKSpriteNode(imageNamed: "background")
     
     override func didMove(to view: SKView) {
-//        let backgroundImage = SKSpriteNode(imageNamed: "background")
-//        backgroundImage.position = CGPoint(x: self.frame.width/5, y: self.frame.height/5)
-//        self.addChild(backgroundImage)
+        backgroundImage.position = CGPoint(x: self.frame.width/5, y: self.frame.height/5)
+        self.insertChild(backgroundImage, at: 0)
+        
+        
+        paddle = self.childNode(withName: "paddle") as! SKSpriteNode
+        paddle.position = CGPoint(x: 0, y: -(view.frame.size.height)*2/5)
+        paddle.zPosition = 1
         
         ball = self.childNode(withName: "ball") as! SKSpriteNode
-        paddle = self.childNode(withName: "paddle") as! SKSpriteNode
-        
         ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 20))
+        ball.zPosition = 1
         
         let border = SKPhysicsBody(edgeLoopFrom: self.frame)
         border.friction = 0
