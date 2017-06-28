@@ -11,9 +11,24 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var ball = SKSpriteNode()
+    var paddle = SKSpriteNode()
+    
     override func didMove(to view: SKView) {
+//        let backgroundImage = SKSpriteNode(imageNamed: "background")
+//        backgroundImage.position = CGPoint(x: self.frame.width/5, y: self.frame.height/5)
+//        self.addChild(backgroundImage)
         
-
+        ball = self.childNode(withName: "ball") as! SKSpriteNode
+        paddle = self.childNode(withName: "paddle") as! SKSpriteNode
+        
+        ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 20))
+        
+        let border = SKPhysicsBody(edgeLoopFrom: self.frame)
+        border.friction = 0
+        border.restitution = 1
+        
+        self.physicsBody = border
     }
     
     

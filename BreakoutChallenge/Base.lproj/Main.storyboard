@@ -20,18 +20,7 @@
                     <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="4r9-Yw-N3m">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                            </imageView>
-                        </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="4r9-Yw-N3m" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="0tS-zd-1l6"/>
-                            <constraint firstAttribute="trailing" secondItem="4r9-Yw-N3m" secondAttribute="trailing" id="RD2-qf-8np"/>
-                            <constraint firstItem="4r9-Yw-N3m" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="edf-y2-WQe"/>
-                            <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="4r9-Yw-N3m" secondAttribute="bottom" id="hyU-AA-XOc"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
@@ -39,7 +28,4 @@
             <point key="canvasLocation" x="136.80000000000001" y="138.98050974512745"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="background" width="1920" height="1080"/>
-    </resources>
 </document>
