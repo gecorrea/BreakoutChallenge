@@ -1,11 +1,3 @@
-//
-//  GameViewController.swift
-//  BreakoutChallenge
-//
-//  Created by Aditya Narayan on 6/28/17.
-//  Copyright © 2017 George Correa. All rights reserved.
-//
-
 import UIKit
 import SpriteKit
 import GameplayKit

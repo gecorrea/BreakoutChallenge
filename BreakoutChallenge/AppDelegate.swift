@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  BreakoutChallenge
-//
-//  Created by Aditya Narayan on 6/28/17.
-//  Copyright © 2017 George Correa. All rights reserved.
-//
-
 import UIKit
 
 @UIApplicationMain
@@ -40,7 +32,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
 
