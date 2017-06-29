@@ -3,6 +3,12 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    let BallCategory   : UInt32 = 0x1 << 0
+    let BottomCategory : UInt32 = 0x1 << 1
+    let BlockCategory  : UInt32 = 0x1 << 2
+    let PaddleCategory : UInt32 = 0x1 << 3
+    let BorderCategory : UInt32 = 0x1 << 4
+    
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     let backgroundImage = SKSpriteNode(imageNamed: "background")
@@ -25,6 +31,34 @@ class GameScene: SKScene {
         border.restitution = 1
         
         self.physicsBody = border
+        
+        
+        // 1
+        let numberOfBlocks = 8
+//        let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
+//        let totalBlocksWidth = blockWidth * CGFloat(numberOfBlocks)
+        // 2
+//        let xOffset = (frame.width - totalBlocksWidth) / 2
+        // 3
+        for i in 0..<numberOfBlocks {
+            let block = SKSpriteNode(imageNamed: "brick1")
+//            block.position = CGPoint(x: xOffset + CGFloat(CGFloat(i) + 0.5) * blockWidth,
+//                                     y: frame.height * 0.8)
+            
+            block.position = CGPoint(x: CGFloat(i) + 0.5, y: 0)
+            
+            block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
+            block.physicsBody!.allowsRotation = false
+            block.physicsBody!.friction = 0.0
+            block.physicsBody!.affectedByGravity = false
+            block.physicsBody!.isDynamic = false
+            block.name = "brick"
+            block.physicsBody!.categoryBitMask = 1
+            block.physicsBody?.collisionBitMask = 2
+            block.physicsBody?.contactTestBitMask = 2
+            block.zPosition = 1
+            addChild(block)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
