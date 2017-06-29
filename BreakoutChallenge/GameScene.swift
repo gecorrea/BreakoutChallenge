@@ -11,7 +11,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
+    let bottom = SKSpriteNode()
     let backgroundImage = SKSpriteNode(imageNamed: "background")
+    var isFingerOnPaddle = false
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
@@ -20,31 +22,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.insertChild(backgroundImage, at: 0)
         
         
-        let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
-        borderBody.friction = 0
-        self.physicsBody = borderBody
+//        let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+//        borderBody.friction = 0
+//        borderBody.restitution = 1
+//        borderBody.contactTestBitMask = 2
+//        borderBody.collisionBitMask = 2
+//        borderBody.categoryBitMask = 1
+//        borderBody.isDynamic = false
+//        self.physicsBody = borderBody
+        
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
         paddle = self.childNode(withName: "paddle") as! SKSpriteNode
         paddle.position = CGPoint(x: 0, y: -(view.frame.size.height)*2/5)
         paddle.zPosition = 1
+//        print(paddle.frame)
         
         ball = self.childNode(withName: "ball") as! SKSpriteNode
-        ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 20))
+        ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
+        ball.physicsBody?.collisionBitMask = 1
+        ball.physicsBody?.contactTestBitMask = 1
+        ball.physicsBody?.categoryBitMask = 2
         ball.zPosition = 1
         
-        let bottomRect = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.size.width, height: 1)
-        let bottom = SKNode()
+        let bottomRect = CGRect(x: -(view.frame.size.width)/2, y: -(view.frame.size.height)/2, width: view.frame.size.width, height: 500)
+//        let bottom = SKNode()
         bottom.physicsBody = SKPhysicsBody(edgeLoopFrom: bottomRect)
-        addChild(bottom)
+        bottom.color = .red
+        self.insertChild(bottom, at: 2)
         
-//        let border = SKPhysicsBody(edgeLoopFrom: self.frame)
-//        border.friction = 0
-//        border.restitution = 1
-//        self.physicsBody = border
+        let border = SKPhysicsBody(edgeLoopFrom: self.frame)
+        border.friction = 0
+        border.restitution = 1
+        self.physicsBody = border
         
         ball.physicsBody!.categoryBitMask = BallCategory
-        paddle.physicsBody!.categoryBitMask = PaddleCategory
-        borderBody.categoryBitMask = BorderCategory
+//        paddle.physicsBody!.categoryBitMask = PaddleCategory
+//        border.categoryBitMask = BorderCategory
         bottom.physicsBody?.categoryBitMask = BottomCategory
         
         makeBricks()
@@ -68,6 +82,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == BlockCategory {
             print("Hit brick")
         }
+        
+        if firstBody.categoryBitMask == BallCategory && secondBody == bottom {
+            print("Rock bottom")
+        }
+        
+        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
+            print("To the wallz")
+        }
     }
 
     
@@ -86,7 +108,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //                                     y: frame.height * 0.8)
             //            block.position = CGPoint(x: frame.width, y: frame.height)
             
-            block.position = CGPoint(x: CGFloat(i) * (blockWidth / 2) - (frame.width / 4), y: 0)
+            block.position = CGPoint(x: CGFloat(i) * (blockWidth / 2) - (frame.width / 4), y: 100)
             
             block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
             block.physicsBody!.allowsRotation = false
@@ -109,6 +131,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
         }
+//        let touch = touches.first
+//        let touchLocation = touch!.location(in: self)
+//        
+//        if let body = physicsWorld.body(at: touchLocation) {
+//            if body.node!.name == "paddle" {
+//                print("Began touch on paddle")
+//                isFingerOnPaddle = true
+//            }
+//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -116,6 +147,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
         }
+//        if isFingerOnPaddle {
+//            // 2
+//            let touch = touches.first
+//            let touchLocation = touch!.location(in: self)
+//            let previousLocation = touch!.previousLocation(in: self)
+//            // 3
+//            let paddle = childNode(withName: "paddle") as! SKSpriteNode
+//            // 4
+//            var paddleX = paddle.position.x + (touchLocation.x - previousLocation.x)
+//            // 5
+//            paddleX = max(paddleX, paddle.size.width/2)
+//            paddleX = min(paddleX, size.width - paddle.size.width/2)
+//            // 6
+//            paddle.position = CGPoint(x: paddleX, y: paddle.position.y)
+//        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        isFingerOnPaddle = false
     }
     
     
