@@ -81,9 +81,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             secondBody = contact.bodyA
         }
         // 3
-        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == BlockCategory {
-            print("Hit brick")
-//            brick.removeFromParent()
+        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
+//            print("Hit brick")
+            breakBlock(node: secondBody.node!)
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
@@ -97,6 +97,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if firstBody.categoryBitMask == BallCategory && secondBody == paddle.physicsBody {
             print("Paddle")
         }
+    }
+    
+    
+    func breakBlock(node: SKNode) {
+//        let particles = SKEmitterNode(fileNamed: "BrokenPlatform")!
+//        particles.position = node.position
+//        particles.zPosition = 3
+//        addChild(particles)
+//        particles.run(SKAction.sequence([SKAction.wait(forDuration: 1.0),
+//                                         SKAction.removeFromParent()]))
+        node.removeFromParent()
     }
 
     
@@ -118,9 +129,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     block.physicsBody!.affectedByGravity = false
                     block.physicsBody!.isDynamic = false
                     block.name = "brick"
-                //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
+                            block.physicsBody!.categoryBitMask = 3
+                    block.physicsBody?.collisionBitMask = 2
+                    block.physicsBody?.contactTestBitMask = 2
                     block.zPosition = 1
                     addChild(block)
                 
