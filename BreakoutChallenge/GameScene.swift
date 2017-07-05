@@ -12,37 +12,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
-    var brick = SKSpriteNode()
-    var brick1 = SKSpriteNode()
-    var brick2 = SKSpriteNode()
-    var brick3 = SKSpriteNode()
-    var brick4 = SKSpriteNode()
-    var brick5 = SKSpriteNode()
-    var brick6 = SKSpriteNode()
-    var brick7 = SKSpriteNode()
-    var brick8 = SKSpriteNode()
-    var brick9 = SKSpriteNode()
-    var brick10 = SKSpriteNode()
-    var brick11 = SKSpriteNode()
-    var brick12 = SKSpriteNode()
-    var brick13 = SKSpriteNode()
-    var brick14 = SKSpriteNode()
-    var brick15 = SKSpriteNode()
-    var brick16 = SKSpriteNode()
-    var brick17 = SKSpriteNode()
-    var brick18 = SKSpriteNode()
-    var brick19 = SKSpriteNode()
-    var brick20 = SKSpriteNode()
-    var brick21 = SKSpriteNode()
-    var brick22 = SKSpriteNode()
-    var brick23 = SKSpriteNode()
-    var brick24 = SKSpriteNode()
-    var brick25 = SKSpriteNode()
-    var brick26 = SKSpriteNode()
-    var brick27 = SKSpriteNode()
-    var brick28 = SKSpriteNode()
+    var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "background")
-    var isFingerOnPaddle = false
+//    var isFingerOnPaddle = false
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
@@ -74,39 +46,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.categoryBitMask = 2
         ball.zPosition = 1
         
-//        brick1 = self.childNode(withName: "brick1") as! SKSpriteNode
-//        brick2 = self.childNode(withName: "brick2") as! SKSpriteNode
-//        brick3 = self.childNode(withName: "brick3") as! SKSpriteNode
-//        brick4 = self.childNode(withName: "brick4") as! SKSpriteNode
-//        brick5 = self.childNode(withName: "brick5") as! SKSpriteNode
-//        brick6 = self.childNode(withName: "brick6") as! SKSpriteNode
-//        brick7 = self.childNode(withName: "brick7") as! SKSpriteNode
-//        brick8 = self.childNode(withName: "brick8") as! SKSpriteNode
-//        brick9 = self.childNode(withName: "brick9") as! SKSpriteNode
-//        brick10 = self.childNode(withName: "brick10") as! SKSpriteNode
-//        brick11 = self.childNode(withName: "brick11") as! SKSpriteNode
-//        brick12 = self.childNode(withName: "brick12") as! SKSpriteNode
-//        brick13 = self.childNode(withName: "brick13") as! SKSpriteNode
-//        brick14 = self.childNode(withName: "brick14") as! SKSpriteNode
-//        brick15 = self.childNode(withName: "brick15") as! SKSpriteNode
-//        brick16 = self.childNode(withName: "brick16") as! SKSpriteNode
-//        brick17 = self.childNode(withName: "brick17") as! SKSpriteNode
-//        brick18 = self.childNode(withName: "brick18") as! SKSpriteNode
-//        brick19 = self.childNode(withName: "brick19") as! SKSpriteNode
-//        brick20 = self.childNode(withName: "brick20") as! SKSpriteNode
-//        brick21 = self.childNode(withName: "brick21") as! SKSpriteNode
-//        brick22 = self.childNode(withName: "brick22") as! SKSpriteNode
-//        brick23 = self.childNode(withName: "brick23") as! SKSpriteNode
-//        brick24 = self.childNode(withName: "brick24") as! SKSpriteNode
-//        brick25 = self.childNode(withName: "brick25") as! SKSpriteNode
-//        brick26 = self.childNode(withName: "brick26") as! SKSpriteNode
-//        brick27 = self.childNode(withName: "brick27") as! SKSpriteNode
-//        brick28 = self.childNode(withName: "brick28") as! SKSpriteNode
-        
-//        brick = self.childNode(withName: "brick1") as! SKSpriteNode
-//        brick.zPosition = 1
-        
-//        let bottom = SKNode()
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
         
@@ -119,6 +58,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        paddle.physicsBody!.categoryBitMask = PaddleCategory
 //        border.categoryBitMask = BorderCategory
 //        bottom.physicsBody?.categoryBitMask = BottomCategory
+        
+        rows = [309.5, 364.5, 419.5, 474.5, 529.5, 584.5, 639.5]
         
         makeBricks()
         
@@ -160,196 +101,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     
     func makeBricks(){
-        let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
+        
+        for row in rows {
+            let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
 
-        for i in 0...7 {
-            let block = SKSpriteNode(imageNamed: "brick1")
-            let rand = Int(arc4random_uniform(2))
-             let blockCount = CGFloat (i)
-            if rand == 1 {
-            block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 309.5)
-                block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                block.physicsBody!.allowsRotation = false
-                block.physicsBody!.friction = 0.0
-                block.physicsBody!.affectedByGravity = false
-                block.physicsBody!.isDynamic = false
-                block.name = "brick"
+            for i in 0...6 {
+                let block = SKSpriteNode(imageNamed: "brick1")
+                block.size.width = blockWidth * 1.071
+                let rand = Int(arc4random_uniform(2))
+                let blockCount = CGFloat (i)
+                if rand == 1 {
+                    block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
+                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
+                    block.physicsBody!.allowsRotation = false
+                    block.physicsBody!.friction = 0.0
+                    block.physicsBody!.affectedByGravity = false
+                    block.physicsBody!.isDynamic = false
+                    block.name = "brick"
                 //            block.physicsBody!.categoryBitMask = BlockCategory
-                block.physicsBody?.collisionBitMask = 1
-                block.physicsBody?.contactTestBitMask = 1
-                block.zPosition = 1
-                addChild(block)
+                    block.physicsBody?.collisionBitMask = 1
+                    block.physicsBody?.contactTestBitMask = 1
+                    block.zPosition = 1
+                    addChild(block)
                 
             
-            }
-                //y values
-                //364.5
-                //419.5
-                //474.5
-                //529.5
-                //584.5
-                //639.5
-            else{
-                continue
-            }
-            
-            for i in 0...7 {
-                let block = SKSpriteNode(imageNamed: "brick1")
-                let rand = Int(arc4random_uniform(2))
-                let blockCount = CGFloat (i)
-                if rand == 1 {
-                    block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 364.5)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
-                    //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
-                    block.zPosition = 1
-                    addChild(block)
-                    
-                    
                 }
                 else{
                     continue
                 }
-
             }
-            
-            for i in 0...7 {
-                let block = SKSpriteNode(imageNamed: "brick1")
-                let rand = Int(arc4random_uniform(2))
-                let blockCount = CGFloat (i)
-                if rand == 1 {
-                    block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 419.5)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
-                    //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
-                    block.zPosition = 1
-                    addChild(block)
-                    
-                    
-                }
-                else{
-                    continue
-                }
-                
-            }
-
-            for i in 0...7 {
-                let block = SKSpriteNode(imageNamed: "brick1")
-                let rand = Int(arc4random_uniform(2))
-                let blockCount = CGFloat (i)
-                if rand == 1 {
-                    block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 474.5)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
-                    //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
-                    block.zPosition = 1
-                    addChild(block)
-                    
-                    
-                }
-                else{
-                    continue
-                }
-                
-            }
-
-            
-            for i in 0...7 {
-                let block = SKSpriteNode(imageNamed: "brick1")
-                let rand = Int(arc4random_uniform(2))
-                let blockCount = CGFloat (i)
-                if rand == 1 {
-                    block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 529.5)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
-                    //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
-                    block.zPosition = 1
-                    addChild(block)
-                    
-                    
-                }
-                else{
-                    continue
-                }
-                
-            }
-
-            for i in 0...7 {
-                let block = SKSpriteNode(imageNamed: "brick1")
-                let rand = Int(arc4random_uniform(2))
-                let blockCount = CGFloat (i)
-                if rand == 1 {
-                    block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 584.5)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
-                    //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
-                    block.zPosition = 1
-                    addChild(block)
-                    
-                    
-                }
-                else{
-                    continue
-                }
-                
-            }
-
-            for i in 0...7 {
-                let block = SKSpriteNode(imageNamed: "brick1")
-                let rand = Int(arc4random_uniform(2))
-                let blockCount = CGFloat (i)
-                if rand == 1 {
-                    block.position = CGPoint(x: frame.origin.x + (blockCount*blockWidth), y: 639.5)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
-                    //            block.physicsBody!.categoryBitMask = BlockCategory
-                    block.physicsBody?.collisionBitMask = 1
-                    block.physicsBody?.contactTestBitMask = 1
-                    block.zPosition = 1
-                    addChild(block)
-                    
-                    
-                }
-                else{
-                    continue
-                }
-                
-            }
-
         }
         
     }
@@ -393,7 +173,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        isFingerOnPaddle = false
+//        isFingerOnPaddle = false
     }
     
     
