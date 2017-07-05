@@ -12,34 +12,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
-    var brick1 = SKSpriteNode()
-    var brick2 = SKSpriteNode()
-    var brick3 = SKSpriteNode()
-    var brick4 = SKSpriteNode()
-    var brick5 = SKSpriteNode()
-    var brick6 = SKSpriteNode()
-    var brick7 = SKSpriteNode()
-    var brick8 = SKSpriteNode()
-    var brick9 = SKSpriteNode()
-    var brick10 = SKSpriteNode()
-    var brick11 = SKSpriteNode()
-    var brick12 = SKSpriteNode()
-    var brick13 = SKSpriteNode()
-    var brick14 = SKSpriteNode()
-    var brick15 = SKSpriteNode()
-    var brick16 = SKSpriteNode()
-    var brick17 = SKSpriteNode()
-    var brick18 = SKSpriteNode()
-    var brick19 = SKSpriteNode()
-    var brick20 = SKSpriteNode()
-    var brick21 = SKSpriteNode()
-    var brick22 = SKSpriteNode()
-    var brick23 = SKSpriteNode()
-    var brick24 = SKSpriteNode()
-    var brick25 = SKSpriteNode()
-    var brick26 = SKSpriteNode()
-    var brick27 = SKSpriteNode()
-    var brick28 = SKSpriteNode()
+    var brick = SKSpriteNode()
+//    var brick1 = SKSpriteNode()
+//    var brick2 = SKSpriteNode()
+//    var brick3 = SKSpriteNode()
+//    var brick4 = SKSpriteNode()
+//    var brick5 = SKSpriteNode()
+//    var brick6 = SKSpriteNode()
+//    var brick7 = SKSpriteNode()
+//    var brick8 = SKSpriteNode()
+//    var brick9 = SKSpriteNode()
+//    var brick10 = SKSpriteNode()
+//    var brick11 = SKSpriteNode()
+//    var brick12 = SKSpriteNode()
+//    var brick13 = SKSpriteNode()
+//    var brick14 = SKSpriteNode()
+//    var brick15 = SKSpriteNode()
+//    var brick16 = SKSpriteNode()
+//    var brick17 = SKSpriteNode()
+//    var brick18 = SKSpriteNode()
+//    var brick19 = SKSpriteNode()
+//    var brick20 = SKSpriteNode()
+//    var brick21 = SKSpriteNode()
+//    var brick22 = SKSpriteNode()
+//    var brick23 = SKSpriteNode()
+//    var brick24 = SKSpriteNode()
+//    var brick25 = SKSpriteNode()
+//    var brick26 = SKSpriteNode()
+//    var brick27 = SKSpriteNode()
+//    var brick28 = SKSpriteNode()
     let backgroundImage = SKSpriteNode(imageNamed: "background")
     var isFingerOnPaddle = false
     
@@ -102,6 +103,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        brick27 = self.childNode(withName: "brick27") as! SKSpriteNode
 //        brick28 = self.childNode(withName: "brick28") as! SKSpriteNode
         
+        brick = self.childNode(withName: "brick1") as! SKSpriteNode
+        brick.zPosition = 1
+        
 //        let bottom = SKNode()
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
@@ -116,7 +120,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        border.categoryBitMask = BorderCategory
 //        bottom.physicsBody?.categoryBitMask = BottomCategory
         
-        makeBricks()
+//        makeBricks()
         
 
     }
@@ -134,8 +138,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             secondBody = contact.bodyA
         }
         // 3
-        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == BlockCategory {
+        if firstBody.categoryBitMask == BallCategory && secondBody == brick.physicsBody {
             print("Hit brick")
+            brick.removeFromParent()
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
