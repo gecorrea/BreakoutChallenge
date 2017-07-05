@@ -12,35 +12,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
-    var brick = SKSpriteNode()
-//    var brick1 = SKSpriteNode()
-//    var brick2 = SKSpriteNode()
-//    var brick3 = SKSpriteNode()
-//    var brick4 = SKSpriteNode()
-//    var brick5 = SKSpriteNode()
-//    var brick6 = SKSpriteNode()
-//    var brick7 = SKSpriteNode()
-//    var brick8 = SKSpriteNode()
-//    var brick9 = SKSpriteNode()
-//    var brick10 = SKSpriteNode()
-//    var brick11 = SKSpriteNode()
-//    var brick12 = SKSpriteNode()
-//    var brick13 = SKSpriteNode()
-//    var brick14 = SKSpriteNode()
-//    var brick15 = SKSpriteNode()
-//    var brick16 = SKSpriteNode()
-//    var brick17 = SKSpriteNode()
-//    var brick18 = SKSpriteNode()
-//    var brick19 = SKSpriteNode()
-//    var brick20 = SKSpriteNode()
-//    var brick21 = SKSpriteNode()
-//    var brick22 = SKSpriteNode()
-//    var brick23 = SKSpriteNode()
-//    var brick24 = SKSpriteNode()
-//    var brick25 = SKSpriteNode()
-//    var brick26 = SKSpriteNode()
-//    var brick27 = SKSpriteNode()
-//    var brick28 = SKSpriteNode()
+//    var brick = SKSpriteNode()
+    var brick1 = SKSpriteNode()
+    var brick2 = SKSpriteNode()
+    var brick3 = SKSpriteNode()
+    var brick4 = SKSpriteNode()
+    var brick5 = SKSpriteNode()
+    var brick6 = SKSpriteNode()
+    var brick7 = SKSpriteNode()
+    var brick8 = SKSpriteNode()
+    var brick9 = SKSpriteNode()
+    var brick10 = SKSpriteNode()
+    var brick11 = SKSpriteNode()
+    var brick12 = SKSpriteNode()
+    var brick13 = SKSpriteNode()
+    var brick14 = SKSpriteNode()
+    var brick15 = SKSpriteNode()
+    var brick16 = SKSpriteNode()
+    var brick17 = SKSpriteNode()
+    var brick18 = SKSpriteNode()
+    var brick19 = SKSpriteNode()
+    var brick20 = SKSpriteNode()
+    var brick21 = SKSpriteNode()
+    var brick22 = SKSpriteNode()
+    var brick23 = SKSpriteNode()
+    var brick24 = SKSpriteNode()
+    var brick25 = SKSpriteNode()
+    var brick26 = SKSpriteNode()
+    var brick27 = SKSpriteNode()
+    var brick28 = SKSpriteNode()
     let backgroundImage = SKSpriteNode(imageNamed: "background")
     var isFingerOnPaddle = false
     
@@ -74,37 +74,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.categoryBitMask = 2
         ball.zPosition = 1
         
-//        brick1 = self.childNode(withName: "brick1") as! SKSpriteNode
-//        brick2 = self.childNode(withName: "brick1") as! SKSpriteNode
-//        brick3 = self.childNode(withName: "brick1") as! SKSpriteNode
-//        brick4 = self.childNode(withName: "brick4") as! SKSpriteNode
-//        brick5 = self.childNode(withName: "brick5") as! SKSpriteNode
-//        brick6 = self.childNode(withName: "brick6") as! SKSpriteNode
-//        brick7 = self.childNode(withName: "brick7") as! SKSpriteNode
-//        brick8 = self.childNode(withName: "brick8") as! SKSpriteNode
-//        brick9 = self.childNode(withName: "brick9") as! SKSpriteNode
-//        brick10 = self.childNode(withName: "brick10") as! SKSpriteNode
-//        brick11 = self.childNode(withName: "brick11") as! SKSpriteNode
-//        brick12 = self.childNode(withName: "brick12") as! SKSpriteNode
-//        brick13 = self.childNode(withName: "brick13") as! SKSpriteNode
-//        brick14 = self.childNode(withName: "brick14") as! SKSpriteNode
-//        brick15 = self.childNode(withName: "brick15") as! SKSpriteNode
-//        brick16 = self.childNode(withName: "brick16") as! SKSpriteNode
-//        brick17 = self.childNode(withName: "brick17") as! SKSpriteNode
-//        brick18 = self.childNode(withName: "brick18") as! SKSpriteNode
-//        brick19 = self.childNode(withName: "brick19") as! SKSpriteNode
-//        brick20 = self.childNode(withName: "brick20") as! SKSpriteNode
-//        brick21 = self.childNode(withName: "brick21") as! SKSpriteNode
-//        brick22 = self.childNode(withName: "brick22") as! SKSpriteNode
-//        brick23 = self.childNode(withName: "brick23") as! SKSpriteNode
-//        brick24 = self.childNode(withName: "brick24") as! SKSpriteNode
-//        brick25 = self.childNode(withName: "brick25") as! SKSpriteNode
-//        brick26 = self.childNode(withName: "brick26") as! SKSpriteNode
-//        brick27 = self.childNode(withName: "brick27") as! SKSpriteNode
-//        brick28 = self.childNode(withName: "brick28") as! SKSpriteNode
+        brick1 = self.childNode(withName: "brick1") as! SKSpriteNode
+        brick2 = self.childNode(withName: "brick2") as! SKSpriteNode
+        brick3 = self.childNode(withName: "brick3") as! SKSpriteNode
+        brick4 = self.childNode(withName: "brick4") as! SKSpriteNode
+        brick5 = self.childNode(withName: "brick5") as! SKSpriteNode
+        brick6 = self.childNode(withName: "brick6") as! SKSpriteNode
+        brick7 = self.childNode(withName: "brick7") as! SKSpriteNode
+        brick8 = self.childNode(withName: "brick8") as! SKSpriteNode
+        brick9 = self.childNode(withName: "brick9") as! SKSpriteNode
+        brick10 = self.childNode(withName: "brick10") as! SKSpriteNode
+        brick11 = self.childNode(withName: "brick11") as! SKSpriteNode
+        brick12 = self.childNode(withName: "brick12") as! SKSpriteNode
+        brick13 = self.childNode(withName: "brick13") as! SKSpriteNode
+        brick14 = self.childNode(withName: "brick14") as! SKSpriteNode
+        brick15 = self.childNode(withName: "brick15") as! SKSpriteNode
+        brick16 = self.childNode(withName: "brick16") as! SKSpriteNode
+        brick17 = self.childNode(withName: "brick17") as! SKSpriteNode
+        brick18 = self.childNode(withName: "brick18") as! SKSpriteNode
+        brick19 = self.childNode(withName: "brick19") as! SKSpriteNode
+        brick20 = self.childNode(withName: "brick20") as! SKSpriteNode
+        brick21 = self.childNode(withName: "brick21") as! SKSpriteNode
+        brick22 = self.childNode(withName: "brick22") as! SKSpriteNode
+        brick23 = self.childNode(withName: "brick23") as! SKSpriteNode
+        brick24 = self.childNode(withName: "brick24") as! SKSpriteNode
+        brick25 = self.childNode(withName: "brick25") as! SKSpriteNode
+        brick26 = self.childNode(withName: "brick26") as! SKSpriteNode
+        brick27 = self.childNode(withName: "brick27") as! SKSpriteNode
+        brick28 = self.childNode(withName: "brick28") as! SKSpriteNode
         
-        brick = self.childNode(withName: "brick1") as! SKSpriteNode
-        brick.zPosition = 1
+//        brick = self.childNode(withName: "brick1") as! SKSpriteNode
+//        brick.zPosition = 1
         
 //        let bottom = SKNode()
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
@@ -138,9 +138,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             secondBody = contact.bodyA
         }
         // 3
-        if firstBody.categoryBitMask == BallCategory && secondBody == brick.physicsBody {
+        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == BlockCategory {
             print("Hit brick")
-            brick.removeFromParent()
+//            brick.removeFromParent()
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
