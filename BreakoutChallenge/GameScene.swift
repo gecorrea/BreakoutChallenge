@@ -11,6 +11,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let GameMessageName = "gameMessage"
     
+    var gameWon = false
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
@@ -20,8 +21,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
-        TapToPlay(scene: self)])
-        //Playing(scene: self),
+        TapToPlay(scene: self),
+        Playing(scene: self)])
         //GameOver(scene: self)
         //])
     
@@ -73,7 +74,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        print(paddle.frame)
         
         ball = self.childNode(withName: "ball") as! SKSpriteNode
-        ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
+//        ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
         
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
@@ -130,8 +131,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
-            print("Rock bottom")
-//            ball.physicsBody?.isResting = true
+//            print("Rock bottom")
+            
+            gameState.enter(GameOver.self)
+            gameWon = false
+
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
@@ -186,6 +190,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    
     func breakBlock(node: SKNode) {
         //        let particles = SKEmitterNode(fileNamed: "BrokenPlatform")!
         //        particles.position = node.position
@@ -196,26 +201,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         node.removeFromParent()
     }
     
+    
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let location = touch.location(in: self)
-            paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
+        
+        
+        
+        switch gameState.currentState {
+        case is TapToPlay:
+            gameState.enter(Playing.self)
+           
+            
+        case is Playing:
+            for touch in touches {
+                let location = touch.location(in: self)
+                paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
+            }
+            
+            
+        case is GameOver:
+            let newScene = GameScene(fileNamed:"GameScene")
+            newScene!.scaleMode = .aspectFit
+            let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
+            self.view?.presentScene(newScene!, transition: reveal)
+            
+        default:
+            break
         }
-//        let touch = touches.first
-//        let touchLocation = touch!.location(in: self)
-//        
-//        if let body = physicsWorld.body(at: touchLocation) {
-//            if body.node!.name == "paddle" {
-//                print("Began touch on paddle")
-//                isFingerOnPaddle = true
-//            }
-//        }
+
+
+        
+        
+
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        
         for touch in touches {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
+            
+            
+            
+            
+            
+            
+            
+            
         }
 //        if isFingerOnPaddle {
 //            // 2
@@ -233,6 +267,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //            paddle.position = CGPoint(x: paddleX, y: paddle.position.y)
 //        }
     }
+    
+    func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
+        let rand:CGFloat = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
+        return (rand) * (to - from) + from
+    }
+
+    
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        isFingerOnPaddle = false

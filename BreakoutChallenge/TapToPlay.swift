@@ -23,4 +23,13 @@ class TapToPlay: GKState {
         scene.childNode(withName: "gameMessage")!.run(scale)
     }
     
+    override func willExit(to nextState: GKState) {
+        if nextState is Playing {
+            let scale = SKAction.scale(to: 0, duration: 0.4)
+            scene.childNode(withName: "gameMessage")!.run(scale)
+        }
+    }
+
+    
+    
 }
