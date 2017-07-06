@@ -9,12 +9,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let PaddleCategory : UInt32 = 0x1 << 3
     let BorderCategory : UInt32 = 0x1 << 4
     
+    let GameMessageName = "gameMessage"
+    
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
     var block = SKSpriteNode()
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
+    
+    
+    lazy var gameState: GKStateMachine = GKStateMachine(states: [
+        TapToPlay(scene: self)])
+        //Playing(scene: self),
+        //GameOver(scene: self)
+        //])
+    
+    
+//    let 
+
 //    var isFingerOnPaddle = false
     
     override func didMove(to view: SKView) {
@@ -83,6 +96,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         rows = [309.5, 364.5, 419.5, 474.5, 529.5, 584.5, 639.5]
         
         makeBricks()
+        
+        let gameMessage = SKSpriteNode(imageNamed: "TapToPlay")
+        gameMessage.name = GameMessageName
+        gameMessage.position = CGPoint(x: frame.midX, y: frame.midY)
+        gameMessage.zPosition = 4
+        gameMessage.setScale(0.0)
+        addChild(gameMessage)
+        
+        gameState.enter(TapToPlay.self)
         
 
     }
