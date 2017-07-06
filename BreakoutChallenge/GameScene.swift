@@ -12,14 +12,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
+    var block = SKSpriteNode()
     var rows = [CGFloat]()
-    let backgroundImage = SKSpriteNode(imageNamed: "background")
+    let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
 //    var isFingerOnPaddle = false
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
-        
-        backgroundImage.position = CGPoint(x: self.frame.width/5, y: self.frame.height/5)
+        backgroundImage.inputView?.layer.contents = UIImage(named: "PrisonCell")?.cgImage
+        backgroundImage.size = CGSize(width: view.frame.size.width*1.85, height: view.frame.size.height*1.85)
+//        view.layer.contents = UIImage(named: "PrisonCell")?.cgImage
+//        backgroundImage.position = CGPoint(x: self.frame.width/20, y: self.frame.height/10)
         self.insertChild(backgroundImage, at: 0)
         
         
@@ -34,13 +37,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-        paddle = self.childNode(withName: "paddle") as! SKSpriteNode
+//        paddle = self.childNode(withName: "paddle") as! SKSpriteNode
+        paddle.texture = nil
+        paddle.color = UIColor.orange
+        paddle.colorBlendFactor = 1
+        paddle.size = CGSize(width: 200, height: 30)
+        paddle.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 200, height: 30))
+        paddle.physicsBody?.allowsRotation = false
+        paddle.physicsBody?.friction = 0.0
+        paddle.physicsBody?.affectedByGravity = false
+        paddle.physicsBody?.isDynamic = false
+        paddle.name = "paddle"
+        paddle.physicsBody?.categoryBitMask = 1
+        paddle.physicsBody?.collisionBitMask = 2
+        paddle.physicsBody?.contactTestBitMask = 2
         paddle.position = CGPoint(x: 0, y: -(view.frame.size.height)*2/5)
         paddle.zPosition = 1
+        self.insertChild(paddle, at: 1)
+        let range = SKRange(lowerLimit: backgroundImage.frame.minX+100, upperLimit: backgroundImage.frame.maxX-100)
+        let constraint = SKConstraint.positionX(range)
+        paddle.constraints = [constraint]
 //        print(paddle.frame)
         
         ball = self.childNode(withName: "ball") as! SKSpriteNode
         ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
+        
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
         ball.physicsBody?.categoryBitMask = 2
@@ -82,12 +103,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         // 3
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
-//            print("Hit brick")
+            print("Hit brick")
             breakBlock(node: secondBody.node!)
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
             print("Rock bottom")
+//            ball.physicsBody?.isResting = true
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
@@ -97,19 +119,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if firstBody.categoryBitMask == BallCategory && secondBody == paddle.physicsBody {
             print("Paddle")
         }
+        if firstBody == paddle.physicsBody && secondBody == bottom.physicsBody {
+            print("Da fuq")
+        }
+            if (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody {
+            ball.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 0))
+            ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
+        }
+        
+//        if ball.physicsBody?.velocity.dx == 0 && ball.physicsBody?.velocity.dy == 0 && secondBody == bottom.physicsBody {
+//        }
     }
-    
-    
-    func breakBlock(node: SKNode) {
-//        let particles = SKEmitterNode(fileNamed: "BrokenPlatform")!
-//        particles.position = node.position
-//        particles.zPosition = 3
-//        addChild(particles)
-//        particles.run(SKAction.sequence([SKAction.wait(forDuration: 1.0),
-//                                         SKAction.removeFromParent()]))
-        node.removeFromParent()
-    }
-
     
     func makeBricks(){
         
@@ -117,7 +137,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
 
             for i in 0...6 {
-                let block = SKSpriteNode(imageNamed: "brick1")
+                block = SKSpriteNode(imageNamed: "brick1")
                 block.size.width = blockWidth * 1.071
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
@@ -129,12 +149,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     block.physicsBody!.affectedByGravity = false
                     block.physicsBody!.isDynamic = false
                     block.name = "brick"
-                            block.physicsBody!.categoryBitMask = 3
+                    block.physicsBody!.categoryBitMask = 3
                     block.physicsBody?.collisionBitMask = 2
                     block.physicsBody?.contactTestBitMask = 2
                     block.zPosition = 1
                     addChild(block)
-                
             
                 }
                 else{
@@ -143,6 +162,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+    }
+    
+    func breakBlock(node: SKNode) {
+        //        let particles = SKEmitterNode(fileNamed: "BrokenPlatform")!
+        //        particles.position = node.position
+        //        particles.zPosition = 3
+        //        addChild(particles)
+        //        particles.run(SKAction.sequence([SKAction.wait(forDuration: 1.0),
+        //                                         SKAction.removeFromParent()]))
+        node.removeFromParent()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
