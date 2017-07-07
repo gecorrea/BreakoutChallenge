@@ -184,12 +184,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func breakBlock(node: SKNode) {
-        //        let particles = SKEmitterNode(fileNamed: "BrokenPlatform")!
-        //        particles.position = node.position
-        //        particles.zPosition = 3
-        //        addChild(particles)
-        //        particles.run(SKAction.sequence([SKAction.wait(forDuration: 1.0),
-        //                                         SKAction.removeFromParent()]))
+                let particles = SKEmitterNode(fileNamed: "BreakBlock")!
+                particles.position = node.position
+                particles.zPosition = 3
+                addChild(particles)
+                particles.run(SKAction.sequence([SKAction.wait(forDuration: 0.25),
+                                                 SKAction.removeFromParent()]))
         node.removeFromParent()
     }
     
