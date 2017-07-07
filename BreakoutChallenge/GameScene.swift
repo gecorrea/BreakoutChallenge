@@ -174,16 +174,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for row in rows {
             let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
             for i in 0...6 {
-                block = SKSpriteNode(imageNamed: "brick1")
+//                block = SKSpriteNode(imageNamed: "brick1")
                 block.size.width = blockWidth * 1.071
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
                 
                 if rand == 0{
+                    let rand2 = Int(arc4random_uniform(99))
+                    if rand2 < 15 {
+                        block = SKSpriteNode(imageNamed: "brickSplode")
+                        block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
+                        block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
+                        block.physicsBody!.allowsRotation = false
+                        block.physicsBody!.friction = 0.0
+                        block.physicsBody!.affectedByGravity = false
+                        block.physicsBody!.isDynamic = false
+                        block.name = "brick"
+                        block.physicsBody!.categoryBitMask = 3
+                        block.physicsBody?.collisionBitMask = 2
+                        block.physicsBody?.contactTestBitMask = 2
+                        block.zPosition = 1
+                        addChild(block)
+
+                    }
+                    else {
+                        continue
+                    }
                     
                 }
                 
                 if rand == 1 {
+                    block = SKSpriteNode(imageNamed: "brick1")
                     block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
                     block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                     block.physicsBody!.allowsRotation = false
