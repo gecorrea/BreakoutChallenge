@@ -19,6 +19,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var brickCount = Int()
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
+    var bars = UIImageView()
     
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
@@ -34,9 +35,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let actionSequence = SKAction.sequence([SKAction.setTexture(texture),
                                                     SKAction.scale(to: 1.0, duration: 0.25)])
             
+            if textureName == "GameOver" {
+                bars.image = UIImage(named: "cellBars")
+                bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
+                bars.contentMode = .scaleToFill
+                moveImageView(imgView: bars)
+            }
+            
             gameOver.run(actionSequence)
             //            run(gameWon ? gameWonSound : gameOverSound)
         }
+    }
+    
+    func moveImageView(imgView: UIImageView){
+        let transition = CATransition()
+        transition.duration = 1.0
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionMoveIn
+        transition.subtype = kCATransitionFromBottom
+        imgView.layer.add(transition, forKey: nil)
+        view?.addSubview(imgView)
     }
     
     override func didMove(to view: SKView) {
@@ -220,6 +238,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case is GameOver:
             let newScene = GameScene(fileNamed:"GameScene")
             newScene!.scaleMode = .aspectFit
+            bars.removeFromSuperview()
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             self.view?.presentScene(newScene!, transition: reveal)
             
