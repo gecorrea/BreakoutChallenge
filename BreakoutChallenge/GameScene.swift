@@ -160,6 +160,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 block.size.width = blockWidth * 1.071
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
+                
+                if rand == 0{
+                    
+                }
+                
                 if rand == 1 {
                     block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
                     block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
