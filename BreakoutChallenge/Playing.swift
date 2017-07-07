@@ -21,7 +21,7 @@ class Playing: GKState {
     override func didEnter(from previousState: GKState?) {
         if previousState is TapToPlay {
             let ball = scene.childNode(withName: "ball") as! SKSpriteNode
-            ball.physicsBody?.applyImpulse(CGVector(dx: randomDirection(), dy: randomDirection()))
+            ball.physicsBody?.applyImpulse(CGVector(dx: 0, dy: randomDirection()))
         }
     }
 
@@ -55,7 +55,7 @@ class Playing: GKState {
     }
     
     func randomDirection() -> CGFloat {
-        let speedFactor: CGFloat = 3.0
+        let speedFactor: CGFloat = 40.0
         if scene.randomFloat(from: 0.0, to: 100.0) >= 50 {
             return -speedFactor
         } else {

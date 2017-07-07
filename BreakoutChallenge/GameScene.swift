@@ -11,47 +11,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let GameMessageName = "gameMessage"
     
-    var gameWon = false
+//    var gameWon = false
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
     var block = SKSpriteNode()
+    var brickCount = Int()
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
     
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
         TapToPlay(scene: self),
-        Playing(scene: self)])
-        //GameOver(scene: self)
-        //])
+        Playing(scene: self),
+        GameOver(scene: self)])
     
-    
-//    let 
-
-//    var isFingerOnPaddle = false
+    var gameWon : Bool = false {
+        didSet {
+            let gameOver = childNode(withName: GameMessageName) as! SKSpriteNode
+            let textureName = gameWon ? "YouWon" : "GameOver"
+            let texture = SKTexture(imageNamed: textureName)
+            let actionSequence = SKAction.sequence([SKAction.setTexture(texture),
+                                                    SKAction.scale(to: 1.0, duration: 0.25)])
+            
+            gameOver.run(actionSequence)
+            //            run(gameWon ? gameWonSound : gameOverSound)
+        }
+    }
     
     override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
         backgroundImage.inputView?.layer.contents = UIImage(named: "PrisonCell")?.cgImage
         backgroundImage.size = CGSize(width: view.frame.size.width*1.85, height: view.frame.size.height*1.85)
-//        view.layer.contents = UIImage(named: "PrisonCell")?.cgImage
-//        backgroundImage.position = CGPoint(x: self.frame.width/20, y: self.frame.height/10)
         self.insertChild(backgroundImage, at: 0)
-        
-        
-//        let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
-//        borderBody.friction = 0
-//        borderBody.restitution = 1
-//        borderBody.contactTestBitMask = 2
-//        borderBody.collisionBitMask = 2
-//        borderBody.categoryBitMask = 1
-//        borderBody.isDynamic = false
-//        self.physicsBody = borderBody
         
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-//        paddle = self.childNode(withName: "paddle") as! SKSpriteNode
         paddle.texture = nil
         paddle.color = UIColor.orange
         paddle.colorBlendFactor = 1
@@ -71,10 +66,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let range = SKRange(lowerLimit: backgroundImage.frame.minX+100, upperLimit: backgroundImage.frame.maxX-100)
         let constraint = SKConstraint.positionX(range)
         paddle.constraints = [constraint]
-//        print(paddle.frame)
         
         ball = self.childNode(withName: "ball") as! SKSpriteNode
-//        ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
         
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
@@ -128,6 +121,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
             print("Hit brick")
             breakBlock(node: secondBody.node!)
+            if isGameWon() {
+                gameState.enter(GameOver.self)
+                gameWon = true
+            }
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
@@ -138,30 +135,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         }
         
-        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
-            print("To the wallz")
-        }
-        
-        if firstBody.categoryBitMask == BallCategory && secondBody == paddle.physicsBody {
-            print("Paddle")
-        }
-        if firstBody == paddle.physicsBody && secondBody == bottom.physicsBody {
-            print("Da fuq")
-        }
+//        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
+//            print("To the wallz")
+//        }
+//        
+//        if firstBody.categoryBitMask == BallCategory && secondBody == paddle.physicsBody {
+//            print("Paddle")
+//        }
+//        if firstBody == paddle.physicsBody && secondBody == bottom.physicsBody {
+//            print("Da fuq")
+//        }
             if (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody {
-            ball.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 0))
+            ball.physicsBody?.isResting = true
             ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
         }
-        
-//        if ball.physicsBody?.velocity.dx == 0 && ball.physicsBody?.velocity.dy == 0 && secondBody == bottom.physicsBody {
-//        }
     }
     
     func makeBricks(){
         
         for row in rows {
             let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
-
             for i in 0...6 {
                 block = SKSpriteNode(imageNamed: "brick1")
                 block.size.width = blockWidth * 1.071
@@ -180,7 +173,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     block.physicsBody?.contactTestBitMask = 2
                     block.zPosition = 1
                     addChild(block)
-            
                 }
                 else{
                     continue
@@ -243,29 +235,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
             
-            
-            
-            
-            
-            
-            
-            
         }
-//        if isFingerOnPaddle {
-//            // 2
-//            let touch = touches.first
-//            let touchLocation = touch!.location(in: self)
-//            let previousLocation = touch!.previousLocation(in: self)
-//            // 3
-//            let paddle = childNode(withName: "paddle") as! SKSpriteNode
-//            // 4
-//            var paddleX = paddle.position.x + (touchLocation.x - previousLocation.x)
-//            // 5
-//            paddleX = max(paddleX, paddle.size.width/2)
-//            paddleX = min(paddleX, size.width - paddle.size.width/2)
-//            // 6
-//            paddle.position = CGPoint(x: paddleX, y: paddle.position.y)
-//        }
+    }
+    
+    func isGameWon() -> Bool {
+        brickCount = 0
+        self.enumerateChildNodes(withName: "brick") {
+            node, stop in
+            self.brickCount = self.brickCount + 1
+        }
+        return brickCount == 0
     }
     
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
