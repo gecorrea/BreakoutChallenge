@@ -153,6 +153,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         }
         
+        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 5{
+            
+            //  PUT EXPLODECODE HERE
+            
+            explodeBlock(node: secondBody.node!)
+            
+        }
+        
 //        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
 //            print("To the wallz")
 //        }
@@ -190,7 +198,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         block.physicsBody!.affectedByGravity = false
                         block.physicsBody!.isDynamic = false
                         block.name = "brick"
-                        block.physicsBody!.categoryBitMask = 3
+                        block.physicsBody!.categoryBitMask = 5
                         block.physicsBody?.collisionBitMask = 2
                         block.physicsBody?.contactTestBitMask = 2
                         block.zPosition = 1
@@ -237,7 +245,96 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         node.removeFromParent()
     }
     
-    
+    func explodeBlock(node:SKNode){
+        let brickHeight = node.frame.height
+        let brickWidth = node.frame.width
+        
+        
+        //Collision on the right
+        let invisiBrickRight = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickRight.position = CGPoint(x: node.position.x + brickWidth, y: node.position.y)
+        invisiBrickRight.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickRight.physicsBody?.collisionBitMask = 1
+        invisiBrickRight.physicsBody?.contactTestBitMask = 1
+        invisiBrickRight.zPosition = 1
+        
+        //Collision to the left
+        let invisiBrickLeft = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickLeft.position = CGPoint(x: node.position.x - brickWidth, y: node.position.y)
+        invisiBrickLeft.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickLeft.physicsBody?.collisionBitMask = 1
+        invisiBrickLeft.physicsBody?.contactTestBitMask = 1
+        invisiBrickLeft.zPosition = 1
+        
+        //Collision TopLeft
+        let invisiBrickTopLeft = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickTopLeft.position = CGPoint(x: node.position.x - brickWidth, y: node.position.y + brickHeight)
+        invisiBrickTopLeft.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickTopLeft.physicsBody?.collisionBitMask = 1
+        invisiBrickTopLeft.physicsBody?.contactTestBitMask = 1
+        invisiBrickTopLeft.zPosition = 1
+        
+        //Collision TopRight
+        let invisiBrickTopRight = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickTopRight.position = CGPoint(x: node.position.x + brickWidth, y: node.position.y + brickHeight)
+        invisiBrickTopRight.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickTopRight.physicsBody?.collisionBitMask = 1
+        invisiBrickTopRight.physicsBody?.contactTestBitMask = 1
+        invisiBrickTopRight.zPosition = 1
+        
+        //Collision on bottomLeft
+        let invisiBrickBottomLeft = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickBottomLeft.position = CGPoint(x: node.position.x - brickWidth, y: node.position.y - brickHeight)
+        invisiBrickBottomLeft.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickBottomLeft.physicsBody?.collisionBitMask = 1
+        invisiBrickBottomLeft.physicsBody?.contactTestBitMask = 1
+        invisiBrickBottomLeft.zPosition = 1
+        
+        //Collision on bottomRight
+        let invisiBrickBottomRight = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickBottomRight.position = CGPoint(x: node.position.x + brickWidth, y: node.position.y - brickHeight)
+        invisiBrickBottomRight.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickBottomRight.physicsBody?.collisionBitMask = 1
+        invisiBrickBottomRight.physicsBody?.contactTestBitMask = 1
+        invisiBrickBottomRight.zPosition = 1
+        
+        //Collision up top
+        let invisiBrickTop = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickTop.position = CGPoint(x: node.position.x, y: node.position.y + brickHeight)
+        invisiBrickTop.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickTop.physicsBody?.collisionBitMask = 1
+        invisiBrickTop.physicsBody?.contactTestBitMask = 1
+        invisiBrickTop.zPosition = 1
+        
+        //Collision on bottom
+        let invisiBrickBottom = SKSpriteNode(color: .purple, size: block.size)
+        invisiBrickBottom.position = CGPoint(x: node.position.x, y: node.position.y - brickHeight)
+        invisiBrickBottom.physicsBody?.categoryBitMask = BallCategory
+        invisiBrickBottom.physicsBody?.collisionBitMask = 1
+        invisiBrickBottom.physicsBody?.contactTestBitMask = 1
+        invisiBrickBottom.zPosition = 1
+        
+        
+        addChild(invisiBrickRight)
+        addChild(invisiBrickLeft)
+        addChild(invisiBrickTopLeft)
+        addChild(invisiBrickTopRight)
+        addChild(invisiBrickBottomLeft)
+        addChild(invisiBrickBottomRight)
+        addChild(invisiBrickTop)
+        addChild(invisiBrickBottom)
+        
+//        invisiBrickBottomRight.removeFromParent()
+//        invisiBrickLeft.removeFromParent()
+//        invisiBrickTopLeft.removeFromParent()
+//        invisiBrickTopRight.removeFromParent()
+//        invisiBrickBottomLeft.removeFromParent()
+//        invisiBrickBottomRight.removeFromParent()
+//        invisiBrickTop.removeFromParent()
+//        invisiBrickBottom.removeFromParent()
+//        invisiBrickRight.removeFromParent()
+        
+    }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
