@@ -1,5 +1,6 @@
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -11,7 +12,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let GameMessageName = "gameMessage"
     
-//    var gameWon = false
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
@@ -20,6 +20,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
     var bars = UIImageView()
+    var bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
+    var audioPlayer = AVAudioPlayer()
+
     
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
@@ -40,6 +43,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
                 bars.contentMode = .scaleToFill
                 moveImageView(imgView: bars)
+                let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
+                run(jailCell)
             }
             
             gameOver.run(actionSequence)
@@ -67,11 +72,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         paddle.texture = nil
         paddle.color = UIColor.orange
-        paddle.colorBlendFactor = 1
         paddle.size = CGSize(width: 200, height: 30)
         paddle.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 200, height: 30))
         paddle.physicsBody?.allowsRotation = false
-        paddle.physicsBody?.friction = 0.0
         paddle.physicsBody?.affectedByGravity = false
         paddle.physicsBody?.isDynamic = false
         paddle.name = "paddle"
@@ -118,7 +121,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         gameState.enter(TapToPlay.self)
         
-
+        audioPlayer = try! AVAudioPlayer(contentsOf: bgMusic as URL)
+        audioPlayer.prepareToPlay()
+        audioPlayer.play()
+        audioPlayer.numberOfLoops = -1
     }
     
     
@@ -147,7 +153,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
 //            print("Rock bottom")
-            
             gameState.enter(GameOver.self)
             gameWon = false
 
@@ -182,7 +187,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for row in rows {
             let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
             for i in 0...6 {
-//                block = SKSpriteNode(imageNamed: "brick1")
                 block.size.width = blockWidth * 1.071
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
@@ -372,7 +376,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        
         for touch in touches {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
@@ -397,7 +400,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        isFingerOnPaddle = false
     }
     
     
