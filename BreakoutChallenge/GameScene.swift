@@ -102,6 +102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.categoryBitMask = 2
         ball.zPosition = 1
         
+        
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
         
@@ -133,6 +134,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         audioPlayer.play()
         audioPlayer.numberOfLoops = -1
     }
+    
     
     
     
