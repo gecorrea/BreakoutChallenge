@@ -19,6 +19,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var brickCount = Int()
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
+    let winBackground = SKSpriteNode(imageNamed: "freedom")
     var bars = UIImageView()
     var bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
     var audioPlayer = AVAudioPlayer()
@@ -45,6 +46,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 moveImageView(imgView: bars)
                 let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
                 run(jailCell)
+            }
+            else{
+                winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
+                 winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
+                self.insertChild(winBackground, at: 2)
+            
             }
             gameOver.run(actionSequence)
             //            run(gameWon ? gameWonSound : gameOverSound)
@@ -191,7 +198,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func makeBricks(){
         
         for row in rows {
-            for i in 0...6 {
+            for i in 0...1 {
                 let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
                 block.size.width = blockWidth * 1.071
                 let rand = Int(arc4random_uniform(2))
@@ -213,6 +220,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         block.physicsBody?.contactTestBitMask = 2
                         block.zPosition = 1
                         addChild(block)
+                        
 
                     }
                     else {
