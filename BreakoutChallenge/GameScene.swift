@@ -22,6 +22,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let winBackground = SKSpriteNode(imageNamed: "freedom")
     var bars = UIImageView()
     var bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
+    var explosion = SKAction.playSoundFileNamed("explosion", waitForCompletion: false)
     var audioPlayer = AVAudioPlayer()
 
     
@@ -171,6 +172,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             secondBody.contactTestBitMask = BallCategory
 //            blastRadius(secondBody: secondBody, onCompletion: {
             breakBlock(node: secondBody.node!)
+            run(explosion)
+            
         }
         
 //        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
@@ -214,7 +217,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         block.physicsBody!.friction = 0.0
                         block.physicsBody!.affectedByGravity = false
                         block.physicsBody!.isDynamic = false
-                        block.name = "brick"
+                        block.name = "tnt"
                         block.physicsBody!.categoryBitMask = 5
                         block.physicsBody?.collisionBitMask = 2
                         block.physicsBody?.contactTestBitMask = 2
@@ -254,12 +257,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func breakBlock(node: SKNode) {
-                let particles = SKEmitterNode(fileNamed: "BreakBlock")!
-                particles.position = node.position
-                particles.zPosition = 3
-                addChild(particles)
-                particles.run(SKAction.sequence([SKAction.wait(forDuration: 0.25),
+        if node.name == "tnt" {
+            let particles = SKEmitterNode(fileNamed: "BreakTNT")!
+            particles.position = node.position
+            particles.zPosition = 3
+            addChild(particles)
+            particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
+                                             SKAction.removeFromParent()]))
+        }
+        else {
+            let particles = SKEmitterNode(fileNamed: "BreakBrick")!
+            particles.position = node.position
+            particles.zPosition = 3
+            addChild(particles)
+            particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
                                                  SKAction.removeFromParent()]))
+        }
         node.removeFromParent()
     }
     
