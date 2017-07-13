@@ -329,6 +329,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func breakBlock(node: Block) {
+        let nodeIndex = blocks.index(of: node)
         if node.physicsBody?.categoryBitMask == 5 {
             let particles = SKEmitterNode(fileNamed: "BreakTNT")!
             particles.position = node.position
@@ -346,6 +347,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                                  SKAction.removeFromParent()]))
         }
         node.removeFromParent()
+        blocks.remove(at: nodeIndex!)
     }
     
     
@@ -385,13 +387,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func isGameWon() -> Bool {
-        brickCount = 0
-        self.enumerateChildNodes(withName: "brick") {
-            node, stop in
-            self.brickCount += 1
-        }
-        return brickCount == 0
+       return blocks.count == 0
     }
+    
+    
     
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
         let rand:CGFloat = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
