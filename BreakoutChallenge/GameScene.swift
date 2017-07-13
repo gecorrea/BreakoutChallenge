@@ -15,7 +15,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
-    var bricks = Array<Block>()
+    var blocks = Array<Block>()
 //    lazy var block = Block(x: 0, y: 0, size: CGSize(), texture: SKTexture())
     var brickCount = Int()
     var rows = [CGFloat]()
@@ -153,9 +153,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         // 3
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
-//            print("Hit brick")
-            let theNode = secondBody.node as! Block
-            print("\(theNode.xIndex), \(theNode.yIndex)")
             breakBlock(node: secondBody.node! as! Block)
             if isGameWon() {
                 gameState.enter(GameOver.self)
@@ -173,8 +170,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //  PUT EXPLODECODE HERE
 //            explodeBlock(node: secondBody.node!)
-            let theNode = secondBody.node as! Block
-            print("\(theNode.xIndex), \(theNode.yIndex)")
             breakBlock(node: secondBody.node! as! Block)
             run(explosion)
             
@@ -209,15 +204,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
                     if rand2 < 15 {
+                        let index = 7 * rows.index(of: row)! + i
                         let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
                         let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
-                        let block = Block(x: i, y: rows.index(of: row)!, size: blockSize, texture: SKTexture(imageNamed: "brickSplode"))
+                        let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brickSplode"))
 //                        block.size.width = blockWidth * 1.071
 //                        block.xIndex = i
 //                        block.yIndex = Int(row)
 //                        block.texture = SKTexture(imageNamed: "brickSplode")
-                        block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width) * 1.071, y: row)
+                        block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
                         block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                         block.physicsBody!.allowsRotation = false
                         block.physicsBody!.friction = 0.0
@@ -229,6 +225,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         block.physicsBody?.contactTestBitMask = 2
                         block.zPosition = 1
                         addChild(block)
+                        blocks.append(block)
                     }
                     else {
                         continue
@@ -237,14 +234,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if rand == 1 {
+                    let index = 7 * rows.index(of: row)! + i
                     let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
                     let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
                     let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
-                    let block = Block(x: i, y: rows.index(of: row)!, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
+                    let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
 //                    block.xIndex = i
 //                    block.yIndex = Int(row)
 //                    block.texture = SKTexture(imageNamed: "brick1")
-                    block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width) * 1.071, y: row)
+                    block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
                     block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                     block.physicsBody!.allowsRotation = false
                     block.physicsBody!.friction = 0.0
@@ -256,12 +254,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     block.physicsBody?.contactTestBitMask = 2
                     block.zPosition = 1
                     addChild(block)
+                    blocks.append(block)
                 }
                 else{
                     continue
                 }
             }
         }
+        
+    }
+    
+    func blastRadius(node: Block) {
         
     }
     

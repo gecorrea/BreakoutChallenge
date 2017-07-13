@@ -2,8 +2,7 @@ import SpriteKit
 
 class Block: SKSpriteNode {
 
-    var xIndex: Int
-    var yIndex: Int
+    var index: Int
     
    
     
@@ -11,11 +10,10 @@ class Block: SKSpriteNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(x: Int, y: Int, size: CGSize, texture: SKTexture) {
+    init(index: Int, size: CGSize, texture: SKTexture) {
         
         // public init(texture: SKTexture?, color: UIColor, size: CGSize)
-        self.xIndex = x
-        self.yIndex = y
+        self.index = index
         super.init(texture: texture, color: .clear, size: size)
         
     }
