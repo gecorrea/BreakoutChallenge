@@ -174,6 +174,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //            breakBlock(node: secondBody.node! as! Block)
             run(explosion)
             
+            if isGameWon() {
+                gameState.enter(GameOver.self)
+                gameWon = true
+            }
+
         }
         
 //        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
