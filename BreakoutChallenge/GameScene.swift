@@ -170,7 +170,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //  PUT EXPLODECODE HERE
 //            explodeBlock(node: secondBody.node!)
-            breakBlock(node: secondBody.node! as! Block)
+            blastRadius(node: secondBody.node! as! Block)
+//            breakBlock(node: secondBody.node! as! Block)
             run(explosion)
             
         }
@@ -265,6 +266,64 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func blastRadius(node: Block) {
+        let center = node.index
+        
+        for i in blocks{
+            switch true {
+            case i.index == center-1:
+                if i.index % 7 != 6 {
+                    breakBlock(node: i)
+                }
+                continue
+                
+            case i.index == center+1:
+                if i.index % 7 != 0 {
+                breakBlock(node: i)
+                }
+                continue
+                
+            case i.index == center+6:
+                if i.index % 7 != 6 {
+                    breakBlock(node: i)
+                }
+                continue
+                
+            
+            case i.index == center+7:
+                breakBlock(node: i)
+                continue
+                
+            case i.index == center+8:
+                if i.index % 7 != 0 {
+                    breakBlock(node: i)
+                }
+                continue
+                
+            case i.index == center-6:
+                if i.index % 7 != 0 {
+                    breakBlock(node: i)
+                }
+                continue
+                
+            case i.index == center-7:
+                breakBlock(node: i)
+                continue
+                
+            case i.index == center-8:
+                if i.index % 7 != 6 {
+                    breakBlock(node: i)
+                }
+                continue
+                
+            case i.index == center:
+                breakBlock(node: i)
+                continue
+                
+            default:
+                continue
+            }
+        }
+        
         
     }
     
