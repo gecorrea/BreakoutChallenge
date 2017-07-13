@@ -15,14 +15,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
-    var block = SKSpriteNode()
+    var bricks = Array<Block>()
+//    lazy var block = Block(x: 0, y: 0, size: CGSize(), texture: SKTexture())
     var brickCount = Int()
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
     let winBackground = SKSpriteNode(imageNamed: "freedom")
     var bars = UIImageView()
-    var bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
-    var explosion = SKAction.playSoundFileNamed("explosion", waitForCompletion: false)
+    let bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
+    let explosion = SKAction.playSoundFileNamed("explosion", waitForCompletion: false)
+    let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
     var audioPlayer = AVAudioPlayer()
 
     
@@ -45,7 +47,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
                 bars.contentMode = .scaleToFill
                 moveImageView(imgView: bars)
-                let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
                 run(jailCell)
             }
             else{
@@ -152,8 +153,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         // 3
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
-            print("Hit brick")
-            breakBlock(node: secondBody.node!)
+//            print("Hit brick")
+            let theNode = secondBody.node as! Block
+            print("\(theNode.xIndex), \(theNode.yIndex)")
+            breakBlock(node: secondBody.node! as! Block)
             if isGameWon() {
                 gameState.enter(GameOver.self)
                 gameWon = true
@@ -161,7 +164,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
-//            print("Rock bottom")
             gameState.enter(GameOver.self)
             gameWon = false
 
@@ -171,9 +173,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //  PUT EXPLODECODE HERE
 //            explodeBlock(node: secondBody.node!)
-            secondBody.contactTestBitMask = BallCategory
-//            blastRadius(secondBody: secondBody, onCompletion: {
-            breakBlock(node: secondBody.node!)
+            let theNode = secondBody.node as! Block
+            print("\(theNode.xIndex), \(theNode.yIndex)")
+            breakBlock(node: secondBody.node! as! Block)
             run(explosion)
             
         }
@@ -194,39 +196,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func blastRadius(secondBody: SKPhysicsBody, onCompletion: @escaping () -> Void) {
-//        for brick in contactBricks {
-//            print(brick.node!)
-//        }
-    }
+
     
     func makeBricks(){
         
         for row in rows {
-            for i in 0...1 {
-                let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
-                block.size.width = blockWidth * 1.071
+            for i in 0...6 {
+                
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
                 
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
                     if rand2 < 15 {
-                        block = SKSpriteNode(imageNamed: "brickSplode")
+                        let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
+                        let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
+                        let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
+                        let block = Block(x: i, y: rows.index(of: row)!, size: blockSize, texture: SKTexture(imageNamed: "brickSplode"))
+//                        block.size.width = blockWidth * 1.071
+//                        block.xIndex = i
+//                        block.yIndex = Int(row)
+//                        block.texture = SKTexture(imageNamed: "brickSplode")
                         block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width) * 1.071, y: row)
                         block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                         block.physicsBody!.allowsRotation = false
                         block.physicsBody!.friction = 0.0
                         block.physicsBody!.affectedByGravity = false
                         block.physicsBody!.isDynamic = false
-                        block.name = "tnt"
+                        block.name = "brick"
                         block.physicsBody!.categoryBitMask = 5
                         block.physicsBody?.collisionBitMask = 2
                         block.physicsBody?.contactTestBitMask = 2
                         block.zPosition = 1
                         addChild(block)
-                        
-
                     }
                     else {
                         continue
@@ -235,7 +237,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if rand == 1 {
-                    block = SKSpriteNode(imageNamed: "brick1")
+                    let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
+                    let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
+                    let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
+                    let block = Block(x: i, y: rows.index(of: row)!, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
+//                    block.xIndex = i
+//                    block.yIndex = Int(row)
+//                    block.texture = SKTexture(imageNamed: "brick1")
                     block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width) * 1.071, y: row)
                     block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                     block.physicsBody!.allowsRotation = false
@@ -258,8 +266,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    func breakBlock(node: SKNode) {
-        if node.name == "tnt" {
+    func breakBlock(node: Block) {
+        if node.physicsBody?.categoryBitMask == 5 {
             let particles = SKEmitterNode(fileNamed: "BreakTNT")!
             particles.position = node.position
             particles.zPosition = 3
@@ -278,128 +286,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         node.removeFromParent()
     }
     
-    func explodeBlock(node:SKNode){
-        let brickHeight = node.frame.height
-        let brickWidth = node.frame.width
-        
-        
-        //Collision on the right
-        let invisiBrickRight = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickRight.position = CGPoint(x: node.position.x + brickWidth, y: node.position.y)
-        invisiBrickRight.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickRight.physicsBody?.categoryBitMask = 2
-        invisiBrickRight.physicsBody?.collisionBitMask = 3
-        invisiBrickRight.physicsBody?.contactTestBitMask = 3
-        invisiBrickRight.zPosition = 1
-        
-        //Collision to the left
-        let invisiBrickLeft = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickLeft.position = CGPoint(x: node.position.x - brickWidth, y: node.position.y)
-        invisiBrickLeft.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickLeft.physicsBody?.categoryBitMask = 2
-        invisiBrickLeft.physicsBody?.collisionBitMask = 3
-        invisiBrickLeft.physicsBody?.contactTestBitMask = 3
-        invisiBrickLeft.zPosition = 1
-        
-        //Collision TopLeft
-        let invisiBrickTopLeft = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickTopLeft.position = CGPoint(x: node.position.x - brickWidth, y: node.position.y + brickHeight)
-        invisiBrickTopLeft.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickTopLeft.physicsBody?.categoryBitMask = 2
-        invisiBrickTopLeft.physicsBody?.collisionBitMask = 3
-        invisiBrickTopLeft.physicsBody?.contactTestBitMask = 3
-        invisiBrickTopLeft.zPosition = 1
-        
-        //Collision TopRight
-        let invisiBrickTopRight = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickTopRight.position = CGPoint(x: node.position.x + brickWidth, y: node.position.y + brickHeight)
-        invisiBrickTopRight.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickTopRight.physicsBody?.categoryBitMask = 2
-        invisiBrickTopRight.physicsBody?.collisionBitMask = 3
-        invisiBrickTopRight.physicsBody?.contactTestBitMask = 3
-        invisiBrickTopRight.zPosition = 1
-        
-        //Collision on bottomLeft
-        let invisiBrickBottomLeft = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickBottomLeft.position = CGPoint(x: node.position.x - brickWidth, y: node.position.y - brickHeight)
-        invisiBrickBottomLeft.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickBottomLeft.physicsBody?.categoryBitMask = 2
-        invisiBrickBottomLeft.physicsBody?.collisionBitMask = 1
-        invisiBrickBottomLeft.physicsBody?.contactTestBitMask = 1
-        invisiBrickBottomLeft.zPosition = 1
-        
-        //Collision on bottomRight
-        let invisiBrickBottomRight = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickBottomRight.position = CGPoint(x: node.position.x + brickWidth, y: node.position.y - brickHeight)
-        invisiBrickBottomRight.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickBottomRight.physicsBody?.categoryBitMask = 2
-        invisiBrickBottomRight.physicsBody?.collisionBitMask = 3
-        invisiBrickBottomRight.physicsBody?.contactTestBitMask = 3
-        invisiBrickBottomRight.zPosition = 1
-        
-        //Collision up top
-        let invisiBrickTop = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickTop.position = CGPoint(x: node.position.x, y: node.position.y + brickHeight)
-        invisiBrickTop.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickTop.physicsBody?.categoryBitMask = 2
-        invisiBrickTop.physicsBody?.collisionBitMask = 3
-        invisiBrickTop.physicsBody?.contactTestBitMask = 3
-        invisiBrickTop.zPosition = 1
-        
-        //Collision on bottom
-        let invisiBrickBottom = SKSpriteNode(color: .purple, size: block.size)
-        invisiBrickBottom.position = CGPoint(x: node.position.x, y: node.position.y - brickHeight)
-        invisiBrickBottom.physicsBody?.categoryBitMask = BallCategory
-//        invisiBrickBottom.physicsBody?.categoryBitMask = 2
-        invisiBrickBottom.physicsBody?.collisionBitMask = 3
-        invisiBrickBottom.physicsBody?.contactTestBitMask = 3
-        invisiBrickBottom.zPosition = 1
-        
-        
-        let invisabricks = [invisiBrickRight, invisiBrickLeft, invisiBrickTopLeft, invisiBrickTopRight, invisiBrickBottomLeft, invisiBrickBottomRight, invisiBrickTop, invisiBrickBottom]
-        
-        for brick in invisabricks {
-//            brick.physicsBody!.allowsRotation = false
-//            brick.physicsBody!.friction = 0.0
-//            brick.physicsBody?.affectedByGravity = false
-            brick.physicsBody?.isDynamic = true
-            brick.physicsBody?.restitution = 1
-            brick.physicsBody = SKPhysicsBody(rectangleOf: brick.frame.size)
-            brick.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 20))
-            addChild(brick)
-        }
-//        addChild(invisiBrickRight)
-//        addChild(invisiBrickLeft)
-//        addChild(invisiBrickTopLeft)
-//        addChild(invisiBrickTopRight)
-//        addChild(invisiBrickBottomLeft)
-//        addChild(invisiBrickBottomRight)
-//        addChild(invisiBrickTop)
-//        addChild(invisiBrickBottom)
-        
-        
-        
-//        invisiBrickBottomRight.removeFromParent()
-//        invisiBrickLeft.removeFromParent()
-//        invisiBrickTopLeft.removeFromParent()
-//        invisiBrickTopRight.removeFromParent()
-//        invisiBrickBottomLeft.removeFromParent()
-//        invisiBrickBottomRight.removeFromParent()
-//        invisiBrickTop.removeFromParent()
-//        invisiBrickBottom.removeFromParent()
-//        invisiBrickRight.removeFromParent()
-        
-    }
-    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        
         
         switch gameState.currentState {
         case is TapToPlay:
             gameState.enter(Playing.self)
-           
             
         case is Playing:
             for touch in touches {
@@ -418,11 +310,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         default:
             break
         }
-
-
         
-        
-
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -438,7 +326,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         brickCount = 0
         self.enumerateChildNodes(withName: "brick") {
             node, stop in
-            self.brickCount = self.brickCount + 1
+            self.brickCount += 1
         }
         return brickCount == 0
     }
@@ -446,11 +334,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
         let rand:CGFloat = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
         return (rand) * (to - from) + from
-    }
-
-    
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     }
     
     
