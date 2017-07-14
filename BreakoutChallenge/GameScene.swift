@@ -153,7 +153,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         // 3
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
-            breakBlock(node: secondBody.node! as! Block)
+            guard let node = secondBody.node else {return}
+            breakBlock(node: node as! Block)
             if isGameWon() {
                 gameState.enter(GameOver.self)
                 gameWon = true
@@ -170,8 +171,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //  PUT EXPLODECODE HERE
 //            explodeBlock(node: secondBody.node!)
-            blastRadius(node: secondBody.node! as! Block)
-//            breakBlock(node: secondBody.node! as! Block)
+            
+            guard let node = secondBody.node else {return}
+            blastRadius(node: node as! Block)
+//            breakBlock(node: node as! Block)
             run(explosion)
             
             if isGameWon() {
@@ -206,10 +209,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
-                
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
-                    if rand2 < 15 {
+                    if rand2 < 99 {
                         let index = 7 * rows.index(of: row)! + i
                         let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
