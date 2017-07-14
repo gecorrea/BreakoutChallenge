@@ -5,10 +5,6 @@ import AVFoundation
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let BallCategory   : UInt32 = 0x1 << 0
-    let BottomCategory : UInt32 = 0x1 << 1
-    let BlockCategory  : UInt32 = 0x1 << 2
-    let PaddleCategory : UInt32 = 0x1 << 3
-    let BorderCategory : UInt32 = 0x1 << 4
     
     let GameMessageName = "gameMessage"
     
@@ -16,7 +12,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
     var blocks = Array<Block>()
-//    lazy var block = Block(x: 0, y: 0, size: CGSize(), texture: SKTexture())
     var brickCount = Int()
     var rows = [CGFloat]()
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
@@ -26,7 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let explosion = SKAction.playSoundFileNamed("explosion", waitForCompletion: false)
     let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
     var audioPlayer = AVAudioPlayer()
-
+    var barActionDone = Bool()
     
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
@@ -43,11 +38,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                                     SKAction.scale(to: 1.0, duration: 0.25)])
             
             if textureName == "GameOver" {
-                bars.image = UIImage(named: "cellBars")
-                bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
-                bars.contentMode = .scaleToFill
-                moveImageView(imgView: bars)
-                run(jailCell)
+                if barActionDone == false {
+                    bars.image = UIImage(named: "cellBars")
+                    bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
+                    bars.contentMode = .scaleToFill
+                    moveImageView(imgView: bars)
+                    run(jailCell)
+                    barActionDone = true
+                }
             }
             else{
                 backgroundImage.removeFromParent()
@@ -57,7 +55,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             }
             gameOver.run(actionSequence)
-            //            run(gameWon ? gameWonSound : gameOverSound)
         }
     }
     
@@ -98,12 +95,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         paddle.constraints = [constraint]
         
         ball = self.childNode(withName: "ball") as! SKSpriteNode
-        
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
         ball.physicsBody?.categoryBitMask = 2
         ball.zPosition = 1
-        
         
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
@@ -114,12 +109,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody = border
         
         ball.physicsBody!.categoryBitMask = BallCategory
-//        paddle.physicsBody!.categoryBitMask = PaddleCategory
-//        border.categoryBitMask = BorderCategory
-//        bottom.physicsBody?.categoryBitMask = BottomCategory
         
         rows = [309.5, 364.5, 419.5, 474.5, 529.5, 584.5, 639.5]
-        
         makeBricks()
         
         let gameMessage = SKSpriteNode(imageNamed: "TapToPlay")
@@ -130,6 +121,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(gameMessage)
         
         gameState.enter(TapToPlay.self)
+        barActionDone = false
         
         audioPlayer = try! AVAudioPlayer(contentsOf: bgMusic as URL)
         audioPlayer.prepareToPlay()
@@ -141,10 +133,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func didBegin(_ contact: SKPhysicsContact) {
-        // 1
         var firstBody: SKPhysicsBody
         var secondBody: SKPhysicsBody
-        // 2
+
         if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
             firstBody = contact.bodyA
             secondBody = contact.bodyB
@@ -152,7 +143,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             firstBody = contact.bodyB
             secondBody = contact.bodyA
         }
-        // 3
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
             guard let node = secondBody.node else {return}
             breakBlock(node: node as! Block)
@@ -165,17 +155,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
             gameState.enter(GameOver.self)
             gameWon = false
-
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 5 {
-            
-            //  PUT EXPLODECODE HERE
-//            explodeBlock(node: secondBody.node!)
-            
             guard let node = secondBody.node else {return}
-            blastRadius(node: node as! Block)
-//            breakBlock(node: node as! Block)
+            breakBlock(node: node as! Block)
             run(explosion)
             
             if isGameWon() {
@@ -185,16 +169,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         }
         
-//        if firstBody.categoryBitMask == BallCategory && secondBody == self.physicsBody {
-//            print("To the wallz")
-//        }
-//        
-//        if firstBody.categoryBitMask == BallCategory && secondBody == paddle.physicsBody {
-//            print("Paddle")
-//        }
-//        if firstBody == paddle.physicsBody && secondBody == bottom.physicsBody {
-//            print("Da fuq")
-//        }
             if (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody {
             ball.physicsBody?.isResting = true
             ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
@@ -212,16 +186,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let blockCount = CGFloat (i)
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
-                    if rand2 < 15 {
+                    if rand2 < 99 {
                         let index = 7 * rows.index(of: row)! + i
                         let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
                         let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
                         let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brickSplode"))
-//                        block.size.width = blockWidth * 1.071
-//                        block.xIndex = i
-//                        block.yIndex = Int(row)
-//                        block.texture = SKTexture(imageNamed: "brickSplode")
                         block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
                         block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                         block.physicsBody!.allowsRotation = false
@@ -248,9 +218,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
                     let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
                     let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
-//                    block.xIndex = i
-//                    block.yIndex = Int(row)
-//                    block.texture = SKTexture(imageNamed: "brick1")
                     block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
                     block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
                     block.physicsBody!.allowsRotation = false
@@ -337,7 +304,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func breakBlock(node: Block) {
-        let nodeIndex = blocks.index(of: node)
+        guard let nodeIndex = blocks.index(of: node) else {return}
+        blocks.remove(at: nodeIndex)
         if node.physicsBody?.categoryBitMask == 5 {
             let particles = SKEmitterNode(fileNamed: "BreakTNT")!
             particles.position = node.position
@@ -345,6 +313,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addChild(particles)
             particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
                                              SKAction.removeFromParent()]))
+            blastRadius(node: node)
         }
         else {
             let particles = SKEmitterNode(fileNamed: "BreakBrick")!
@@ -355,7 +324,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                                  SKAction.removeFromParent()]))
         }
         node.removeFromParent()
-        blocks.remove(at: nodeIndex!)
     }
     
     
