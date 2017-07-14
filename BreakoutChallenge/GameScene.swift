@@ -154,7 +154,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
             gameState.enter(GameOver.self)
-            gameWon = false
+            if blocks.count > 0 {
+                gameWon = false
+            }
         }
         
         if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 5 {
@@ -186,7 +188,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let blockCount = CGFloat (i)
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
-                    if rand2 < 99 {
+                    if rand2 < 15 {
                         let index = 7 * rows.index(of: row)! + i
                         let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
