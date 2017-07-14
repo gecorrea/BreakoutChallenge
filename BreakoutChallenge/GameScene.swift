@@ -50,9 +50,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 run(jailCell)
             }
             else{
+                backgroundImage.removeFromParent()
                 winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
                  winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
-                self.insertChild(winBackground, at: 2)
+                self.insertChild(winBackground, at: 0)
             
             }
             gameOver.run(actionSequence)
@@ -211,7 +212,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let blockCount = CGFloat (i)
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
-                    if rand2 < 99 {
+                    if rand2 < 15 {
                         let index = 7 * rows.index(of: row)! + i
                         let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
@@ -375,6 +376,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newScene = GameScene(fileNamed:"GameScene")
             newScene!.scaleMode = .aspectFit
             bars.removeFromSuperview()
+            winBackground.removeFromParent()
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             self.view?.presentScene(newScene!, transition: reveal)
             
