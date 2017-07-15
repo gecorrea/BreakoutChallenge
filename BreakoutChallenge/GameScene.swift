@@ -22,6 +22,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
     var audioPlayer = AVAudioPlayer()
     var barActionDone = Bool()
+    static var difficulty = 36
     
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
@@ -39,6 +40,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if textureName == "GameOver" {
                 if barActionDone == false {
+                    if GameScene.difficulty < 99 {
+                        GameScene.difficulty += 9
+                    }
                     bars.image = UIImage(named: "cellBars")
                     bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
                     bars.contentMode = .scaleToFill
@@ -48,6 +52,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             else{
+                if GameScene.difficulty > 0{
+                    GameScene.difficulty -= 9
+                }
                 backgroundImage.removeFromParent()
                 winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
                  winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
@@ -188,7 +195,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let blockCount = CGFloat (i)
                 if rand == 0{
                     let rand2 = Int(arc4random_uniform(99))
-                    if rand2 < 15 {
+                    if rand2 < GameScene.difficulty {
                         let index = 7 * rows.index(of: row)! + i
                         let blockWidth = SKSpriteNode(imageNamed: "brickSplode").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brickSplode").size.height
