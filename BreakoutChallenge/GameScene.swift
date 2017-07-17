@@ -322,6 +322,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addChild(particles)
             particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
                                              SKAction.removeFromParent()]))
+            shakeCamera(layer: backgroundImage, duration: 1)
+            for Block in blocks {
+                 shakeCamera(layer: Block, duration: 1)
+            }
+//
             blastRadius(node: node)
         }
         else {
@@ -376,6 +381,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
        return blocks.count == 0
     }
     
+    func shakeCamera(layer:SKSpriteNode, duration:Float) {
+        
+        let amplitudeX:Float = 10;
+        let amplitudeY:Float = 6;
+        let numberOfShakes = duration / 0.04;
+        var actionsArray:[SKAction] = [];
+        for _ in 1...Int(numberOfShakes) {
+            let moveX = Float(arc4random_uniform(UInt32(amplitudeX))) - amplitudeX / 2;
+            let moveY = Float(arc4random_uniform(UInt32(amplitudeY))) - amplitudeY / 2;
+            let shakeAction = SKAction.moveBy(x: CGFloat(moveX), y: CGFloat(moveY), duration: 0.02);
+            shakeAction.timingMode = SKActionTimingMode.easeOut;
+            actionsArray.append(shakeAction);
+            actionsArray.append(shakeAction.reversed());
+        }
+        
+        let actionSeq = SKAction.sequence(actionsArray);
+        layer.run(actionSeq);
+    }
     
     
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
