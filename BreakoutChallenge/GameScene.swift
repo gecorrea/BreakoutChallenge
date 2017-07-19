@@ -57,9 +57,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 backgroundImage.removeFromParent()
                 winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
-                 winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
+                winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
                 self.insertChild(winBackground, at: 0)
-            
             }
             gameOver.run(actionSequence)
         }
@@ -106,6 +105,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.contactTestBitMask = 1
         ball.physicsBody?.categoryBitMask = 2
         ball.zPosition = 1
+        ball.physicsBody!.categoryBitMask = BallCategory
         
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
@@ -114,8 +114,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         border.friction = 0
         border.restitution = 1
         self.physicsBody = border
-        
-        ball.physicsBody!.categoryBitMask = BallCategory
         
         rows = [309.5, 364.5, 419.5, 474.5, 529.5, 584.5, 639.5]
         makeBricks()
@@ -126,8 +124,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameMessage.zPosition = 4
         gameMessage.setScale(0.0)
         addChild(gameMessage)
-        
         gameState.enter(TapToPlay.self)
+        
         barActionDone = false
         
         audioPlayer = try! AVAudioPlayer(contentsOf: bgMusic as URL)
@@ -136,13 +134,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         audioPlayer.numberOfLoops = -1
     }
     
-    
-    
-    
     func didBegin(_ contact: SKPhysicsContact) {
         var firstBody: SKPhysicsBody
         var secondBody: SKPhysicsBody
-
+        
         if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
             firstBody = contact.bodyA
             secondBody = contact.bodyB
@@ -150,47 +145,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             firstBody = contact.bodyB
             secondBody = contact.bodyA
         }
-        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3 {
+        
+        switch true {
+        case firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3:
             guard let node = secondBody.node else {return}
             breakBlock(node: node as! Block)
             if isGameWon() {
                 gameState.enter(GameOver.self)
                 gameWon = true
             }
-        }
-        
-        if firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody {
+            break
+            
+        case firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody:
             gameState.enter(GameOver.self)
             if blocks.count > 0 {
                 gameWon = false
             }
-        }
-        
-        if firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 5 {
+            break
+            
+        case firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 5:
             guard let node = secondBody.node else {return}
             breakBlock(node: node as! Block)
             run(explosion)
-            
             if isGameWon() {
                 gameState.enter(GameOver.self)
                 gameWon = true
             }
-
-        }
-        
-            if (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody {
+            break
+            
+        case (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody:
             ball.physicsBody?.isResting = true
             ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
+            break
+            
+        default:
+            break
         }
     }
     
-
-    
     func makeBricks(){
-        
         for row in rows {
             for i in 0...6 {
-                
                 let rand = Int(arc4random_uniform(2))
                 let blockCount = CGFloat (i)
                 if rand == 0{
@@ -202,23 +197,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
                         let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brickSplode"))
                         block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
-                        block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                        block.physicsBody!.allowsRotation = false
-                        block.physicsBody!.friction = 0.0
-                        block.physicsBody!.affectedByGravity = false
-                        block.physicsBody!.isDynamic = false
-                        block.name = "brick"
+                        standardBlockProperties(block: block)
                         block.physicsBody!.categoryBitMask = 5
-                        block.physicsBody?.collisionBitMask = 2
-                        block.physicsBody?.contactTestBitMask = 2
-                        block.zPosition = 1
-                        addChild(block)
-                        blocks.append(block)
                     }
-                    else {
-                        continue
-                    }
-                    
                 }
                 
                 if rand == 1 {
@@ -228,78 +209,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
                     let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
                     block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
-                    block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
-                    block.physicsBody!.allowsRotation = false
-                    block.physicsBody!.friction = 0.0
-                    block.physicsBody!.affectedByGravity = false
-                    block.physicsBody!.isDynamic = false
-                    block.name = "brick"
+                    standardBlockProperties(block: block)
                     block.physicsBody!.categoryBitMask = 3
-                    block.physicsBody?.collisionBitMask = 2
-                    block.physicsBody?.contactTestBitMask = 2
-                    block.zPosition = 1
-                    addChild(block)
-                    blocks.append(block)
-                }
-                else{
-                    continue
                 }
             }
         }
-        
+    }
+    
+    func standardBlockProperties(block: Block) {
+        block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
+        block.physicsBody!.allowsRotation = false
+        block.physicsBody!.friction = 0.0
+        block.physicsBody!.affectedByGravity = false
+        block.physicsBody!.isDynamic = false
+        block.name = "brick"
+        block.physicsBody?.collisionBitMask = 2
+        block.physicsBody?.contactTestBitMask = 2
+        block.zPosition = 1
+        addChild(block)
+        blocks.append(block)
     }
     
     func blastRadius(node: Block) {
         let center = node.index
-        
         for i in blocks{
             switch true {
-            case i.index == center-1:
+            case i.index == center-1 || i.index == center+6 || i.index == center-8:
                 if i.index % 7 != 6 {
                     breakBlock(node: i)
                 }
                 continue
                 
-            case i.index == center+1:
-                if i.index % 7 != 0 {
-                breakBlock(node: i)
-                }
-                continue
-                
-            case i.index == center+6:
-                if i.index % 7 != 6 {
-                    breakBlock(node: i)
-                }
-                continue
-                
-            
-            case i.index == center+7:
-                breakBlock(node: i)
-                continue
-                
-            case i.index == center+8:
+            case i.index == center+1 || i.index == center-6 || i.index == center+8:
                 if i.index % 7 != 0 {
                     breakBlock(node: i)
                 }
                 continue
                 
-            case i.index == center-6:
-                if i.index % 7 != 0 {
-                    breakBlock(node: i)
-                }
-                continue
-                
-            case i.index == center-7:
-                breakBlock(node: i)
-                continue
-                
-            case i.index == center-8:
-                if i.index % 7 != 6 {
-                    breakBlock(node: i)
-                }
-                continue
-                
-            case i.index == center:
+            case i.index == center-7 || i.index == center+7:
                 breakBlock(node: i)
                 continue
                 
@@ -307,10 +254,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 continue
             }
         }
-        
-        
     }
-    
     
     func breakBlock(node: Block) {
         guard let nodeIndex = blocks.index(of: node) else {return}
@@ -324,9 +268,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                              SKAction.removeFromParent()]))
             shakeCamera(layer: backgroundImage, duration: 1)
             for Block in blocks {
-                 shakeCamera(layer: Block, duration: 1)
+                shakeCamera(layer: Block, duration: 1)
             }
-//
             blastRadius(node: node)
         }
         else {
@@ -335,11 +278,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             particles.zPosition = 3
             addChild(particles)
             particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
-                                                 SKAction.removeFromParent()]))
+                                             SKAction.removeFromParent()]))
         }
         node.removeFromParent()
     }
-    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
@@ -353,7 +295,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
             }
             
-            
         case is GameOver:
             let newScene = GameScene(fileNamed:"GameScene")
             newScene!.scaleMode = .aspectFit
@@ -365,7 +306,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         default:
             break
         }
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -373,16 +313,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
-            
         }
     }
     
     func isGameWon() -> Bool {
-       return blocks.count == 0
+        return blocks.count == 0
     }
     
     func shakeCamera(layer:SKSpriteNode, duration:Float) {
-        
         let amplitudeX:Float = 10;
         let amplitudeY:Float = 6;
         let numberOfShakes = duration / 0.04;
@@ -395,7 +333,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             actionsArray.append(shakeAction);
             actionsArray.append(shakeAction.reversed());
         }
-        
         let actionSeq = SKAction.sequence(actionsArray);
         layer.run(actionSeq);
     }

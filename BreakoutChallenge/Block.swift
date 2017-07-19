@@ -17,5 +17,4 @@ class Block: SKSpriteNode {
         super.init(texture: texture, color: .clear, size: size)
         
     }
-    
 }
