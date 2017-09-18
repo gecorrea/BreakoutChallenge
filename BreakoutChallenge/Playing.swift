@@ -21,7 +21,7 @@ class Playing: GKState {
     override func didEnter(from previousState: GKState?) {
         if previousState is TapToPlay {
             let ball = scene.childNode(withName: "ball") as! SKSpriteNode
-            ball.physicsBody?.applyImpulse(CGVector(dx: 0, dy: randomDirection()))
+            ball.physicsBody?.applyImpulse(CGVector(dx: randomDirection(), dy: randomDirection()))
         }
     }
 

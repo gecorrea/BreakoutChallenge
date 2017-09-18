@@ -24,7 +24,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var barActionDone = Bool()
     static var difficulty = 36
     
-    
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
         TapToPlay(scene: self),
         Playing(scene: self),
@@ -54,6 +53,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             else{
                 if GameScene.difficulty > 0{
                     GameScene.difficulty -= 9
+                }
+                for row in rows {
+                    for i in 0...6 {
+                        let blockCount = CGFloat (i)
+                        let index = 7 * rows.index(of: row)! + i
+                        let particles = SKEmitterNode(fileNamed: "BreakBrick")!
+                        let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
+                        let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
+                        let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
+                        let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
+                        particles.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
+                        particles.zPosition = 3
+                        addChild(particles)
+                        particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
+                                                         SKAction.removeFromParent()]))
+                    }
                 }
                 backgroundImage.removeFromParent()
                 winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
@@ -104,6 +119,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
         ball.physicsBody?.categoryBitMask = 2
+        ball.position = CGPoint(x: 0, y: -(view.frame.size.height)*3/10)
         ball.zPosition = 1
         ball.physicsBody!.categoryBitMask = BallCategory
         
@@ -175,7 +191,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         case (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody:
             ball.physicsBody?.isResting = true
-            ball.physicsBody?.applyImpulse(CGVector(dx: 20, dy: 40))
+            gameState.update(deltaTime: 0)
             break
             
         default:
@@ -203,14 +219,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if rand == 1 {
-                    let index = 7 * rows.index(of: row)! + i
-                    let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
-                    let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
-                    let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
-                    let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
-                    block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
-                    standardBlockProperties(block: block)
-                    block.physicsBody!.categoryBitMask = 3
+                    let rand1 = Int(arc4random_uniform(4))
+                    if (rand1 == 1 || rand1 == 2 || rand1 == 3) {
+                        let index = 7 * rows.index(of: row)! + i
+                        let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
+                        let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
+                        let blockSize = CGSize(width: blockWidth * 1.071, height: blockHeight)
+                        let block = Block(index: index, size: blockSize, texture: SKTexture(imageNamed: "brick1"))
+                        block.position = CGPoint(x: frame.origin.x + (block.size.width/2) + (blockCount*block.size.width), y: row)
+                        standardBlockProperties(block: block)
+                        block.physicsBody!.categoryBitMask = 3
+                    }
                 }
             }
         }
@@ -283,8 +302,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         node.removeFromParent()
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {        
         switch gameState.currentState {
         case is TapToPlay:
             gameState.enter(Playing.self)
@@ -337,12 +355,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         layer.run(actionSeq);
     }
     
-    
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
         let rand:CGFloat = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
         return (rand) * (to - from) + from
     }
-    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
