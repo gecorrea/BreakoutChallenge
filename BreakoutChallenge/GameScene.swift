@@ -14,15 +14,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var blocks = Array<Block>()
     var brickCount = Int()
     var rows = [CGFloat]()
+    var winRows = [CGFloat]()
+    let upperBound = 640
+    let lowerBound = -640
     let backgroundImage = SKSpriteNode(imageNamed: "PrisonCell")
     let winBackground = SKSpriteNode(imageNamed: "freedom")
     var bars = UIImageView()
+    let notification = UINotificationFeedbackGenerator()
+    let impact = UIImpactFeedbackGenerator(style: .heavy)
     let bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
     let explosion = SKAction.playSoundFileNamed("explosion", waitForCompletion: false)
     let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
     var audioPlayer = AVAudioPlayer()
     var barActionDone = Bool()
     static var difficulty = 36
+    var stageScore = 0
+    static var currentScore = Int()
+    var stageScoreLabel = SKLabelNode()
+    var currentScoreLabel = SKLabelNode()
+    var finalScoreLabel = SKLabelNode()
+//    var stageScoreLabel = UILabel()
+//    var currentScoreLabel = UILabel()
+//    var finalScoreLabel = UILabel()
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
         TapToPlay(scene: self),
@@ -43,21 +56,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         GameScene.difficulty += 9
                     }
                     bars.image = UIImage(named: "cellBars")
+//                    bars.layer.zPosition = 4
                     bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
                     bars.contentMode = .scaleToFill
                     moveImageView(imgView: bars)
                     run(jailCell)
                     barActionDone = true
+                    notification.notificationOccurred(.warning)
+                    finalScoreLabel.text = "Final Score: \(GameScene.currentScore)"
+                    finalScoreLabel.isHidden = false
+                    stageScore = 0
+                    GameScene.currentScore = 0
                 }
             }
             else{
                 if GameScene.difficulty > 0{
                     GameScene.difficulty -= 9
                 }
-                for row in rows {
+                for row in winRows {
                     for i in 0...6 {
                         let blockCount = CGFloat (i)
-                        let index = 7 * rows.index(of: row)! + i
+                        let index = 7 * winRows.index(of: row)! + i
                         let particles = SKEmitterNode(fileNamed: "BreakBrick")!
                         let blockWidth = SKSpriteNode(imageNamed: "brick1").size.width
                         let blockHeight = SKSpriteNode(imageNamed: "brick1").size.height
@@ -74,6 +93,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
                 winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
                 self.insertChild(winBackground, at: 0)
+                impact.impactOccurred()
+                notification.notificationOccurred(.error)
+                stageScore = 0
             }
             gameOver.run(actionSequence)
         }
@@ -86,6 +108,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         transition.type = kCATransitionMoveIn
         transition.subtype = kCATransitionFromBottom
         imgView.layer.add(transition, forKey: nil)
+//        imgView.layer.zPosition = 4
         view?.addSubview(imgView)
     }
     
@@ -131,16 +154,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         border.restitution = 1
         self.physicsBody = border
         
-        rows = [309.5, 364.5, 419.5, 474.5, 529.5, 584.5, 639.5]
+        // setup rows array
+        var i = upperBound
+        repeat {
+            let newFloat = CGFloat(i)-0.5
+            rows.append(newFloat)
+            i-=55
+        } while i >= ((upperBound/2) - 10)
+        
         makeBricks()
+        
+        // setup winRows array
+        i = upperBound
+        repeat {
+            let newFloat = CGFloat(i)-0.5
+            winRows.append(newFloat)
+            i-=55
+        } while i >= lowerBound
         
         let gameMessage = SKSpriteNode(imageNamed: "TapToPlay")
         gameMessage.name = GameMessageName
         gameMessage.position = CGPoint(x: frame.midX, y: frame.midY)
-        gameMessage.zPosition = 4
+        gameMessage.zPosition = 5
         gameMessage.setScale(0.0)
         addChild(gameMessage)
         gameState.enter(TapToPlay.self)
+//        let margins = view.layoutMarginsGuide
+        stageScoreLabel = childNode(withName: "stageScoreLabel") as! SKLabelNode
+        currentScoreLabel = childNode(withName: "currentScoreLabel") as! SKLabelNode
+        finalScoreLabel = childNode(withName: "finalScoreLabel") as! SKLabelNode
+//        stageScoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+//        stageScoreLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
+//        view.addSubview(stageScoreLabel)
+//        currentScoreLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor).isActive = true
+//        currentScoreLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
+//        view.addSubview(currentScoreLabel)
+//        finalScoreLabel.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
+//        finalScoreLabel.centerYAnchor.constraint(equalTo: margins.centerYAnchor).isActive = true
+//        view.addSubview(finalScoreLabel)
+        finalScoreLabel.isHidden = true
+        stageScoreLabel.text = "Stage Score: \(stageScore)"
+        currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
         
         barActionDone = false
         
@@ -279,6 +333,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard let nodeIndex = blocks.index(of: node) else {return}
         blocks.remove(at: nodeIndex)
         if node.physicsBody?.categoryBitMask == 5 {
+            stageScore+=10
+            GameScene.currentScore+=10
+            stageScoreLabel.text = "Stage Score: \(stageScore)"
+            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
             let particles = SKEmitterNode(fileNamed: "BreakTNT")!
             particles.position = node.position
             particles.zPosition = 3
@@ -292,6 +350,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blastRadius(node: node)
         }
         else {
+            stageScore+=50
+            GameScene.currentScore+=50
+            stageScoreLabel.text = "Stage Score: \(stageScore)"
+            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
             let particles = SKEmitterNode(fileNamed: "BreakBrick")!
             particles.position = node.position
             particles.zPosition = 3
@@ -353,6 +415,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         let actionSeq = SKAction.sequence(actionsArray);
         layer.run(actionSeq);
+        impact.impactOccurred()
     }
     
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
