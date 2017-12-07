@@ -62,6 +62,7 @@ extension GameViewController: RefreshLabelsDelegate {
     
     func gameIsOver() {
         finalScoreLabel.text = "Final Score: \(GameScene.currentScore)"
+        view.bringSubview(toFront: finalScoreLabel)
         finalScoreLabel.isHidden = false
     }
 }

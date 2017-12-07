@@ -75,6 +75,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     labelDelegate?.gameIsOver()
                     GameScene.stageScore = 0
                     GameScene.currentScore = 0
+//                    self.childNode(withName: texture)?.zPosition =
                 }
             }
             else{
@@ -99,7 +100,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 backgroundImage.removeFromParent()
                 winBackground.inputView?.layer.contents = UIImage(named: "freedom")?.cgImage
-                winBackground.size = CGSize(width: (view?.frame.size.width)!*1.85, height: (view?.frame.size.height)!*1.85)
+                winBackground.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
+                winBackground.size = frame.size
                 self.insertChild(winBackground, at: 0)
                 impact.impactOccurred()
                 notification.notificationOccurred(.error)
@@ -124,7 +126,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         backgroundImage.inputView?.layer.contents = UIImage(named: "PrisonCell")?.cgImage
-        backgroundImage.size = CGSize(width: view.frame.size.width*1.85, height: view.frame.size.height*1.85)
+        backgroundImage.size = CGSize(width: view.frame.size.width, height: view.frame.size.height)
+        backgroundImage.size = frame.size
         self.insertChild(backgroundImage, at: 0)
         
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
