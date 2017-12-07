@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="MarkerFeltThin.ttf">
+            <string>MarkerFelt-Thin</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
@@ -20,12 +26,47 @@
                     <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Mw-Wj-ZEW">
+                                <rect key="frame" x="26" y="625" width="167.5" height="22"/>
+                                <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V0Q-La-Fhk">
+                                <rect key="frame" x="201.5" y="625" width="167.5" height="22"/>
+                                <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3u-sT-KrN">
+                                <rect key="frame" x="153" y="371" width="69" height="35"/>
+                                <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="32"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="y3u-sT-KrN" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="0Qz-Oa-Ebd"/>
+                            <constraint firstItem="V0Q-La-Fhk" firstAttribute="leading" secondItem="4Mw-Wj-ZEW" secondAttribute="trailing" constant="8" id="RKG-a0-Vnw"/>
+                            <constraint firstItem="V0Q-La-Fhk" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailingMargin" constant="10" id="Vpn-GR-zgd"/>
+                            <constraint firstItem="V0Q-La-Fhk" firstAttribute="width" secondItem="4Mw-Wj-ZEW" secondAttribute="width" id="c8D-FE-et9"/>
+                            <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="4Mw-Wj-ZEW" secondAttribute="bottom" constant="20" id="dZQ-Gy-Fx2"/>
+                            <constraint firstItem="qHh-Mt-9TT" firstAttribute="top" secondItem="V0Q-La-Fhk" secondAttribute="bottom" constant="20" id="fN6-7p-Mg4"/>
+                            <constraint firstItem="4Mw-Wj-ZEW" firstAttribute="top" secondItem="y3u-sT-KrN" secondAttribute="bottom" constant="219" id="ght-d9-mFN"/>
+                            <constraint firstItem="4Mw-Wj-ZEW" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leadingMargin" constant="10" id="ou1-HW-H3O"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="currentScoreLabel" destination="V0Q-La-Fhk" id="ZRt-va-gwq"/>
+                        <outlet property="finalScoreLabel" destination="y3u-sT-KrN" id="Lqz-gM-c3S"/>
+                        <outlet property="stageScoreLabel" destination="4Mw-Wj-ZEW" id="3hT-jD-aOf"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="138.98050974512745"/>
+            <point key="canvasLocation" x="136.5" y="138.5"/>
         </scene>
     </scenes>
 </document>

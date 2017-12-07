@@ -2,12 +2,19 @@ import SpriteKit
 import GameplayKit
 import AVFoundation
 
+protocol RefreshLabelsDelegate {
+    func beginGame()
+    func updateScore()
+    func gameIsOver()
+}
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let BallCategory   : UInt32 = 0x1 << 0
     
+//    static let sharedInstance = GameScene()
     let GameMessageName = "gameMessage"
-    
+    var labelDelegate: RefreshLabelsDelegate?
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
     var bottom = SKSpriteNode()
@@ -28,11 +35,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var audioPlayer = AVAudioPlayer()
     var barActionDone = Bool()
     static var difficulty = 36
-    var stageScore = 0
+    static var stageScore = 0
     static var currentScore = Int()
-    var stageScoreLabel = SKLabelNode()
-    var currentScoreLabel = SKLabelNode()
-    var finalScoreLabel = SKLabelNode()
+//    var stageScoreLabel = SKLabelNode()
+//    var currentScoreLabel = SKLabelNode()
+//    var finalScoreLabel = SKLabelNode()
 //    var stageScoreLabel = UILabel()
 //    var currentScoreLabel = UILabel()
 //    var finalScoreLabel = UILabel()
@@ -63,9 +70,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     run(jailCell)
                     barActionDone = true
                     notification.notificationOccurred(.warning)
-                    finalScoreLabel.text = "Final Score: \(GameScene.currentScore)"
-                    finalScoreLabel.isHidden = false
-                    stageScore = 0
+//                    finalScoreLabel.text = "Final Score: \(GameScene.currentScore)"
+//                    finalScoreLabel.isHidden = false
+                    labelDelegate?.gameIsOver()
+                    GameScene.stageScore = 0
                     GameScene.currentScore = 0
                 }
             }
@@ -95,12 +103,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.insertChild(winBackground, at: 0)
                 impact.impactOccurred()
                 notification.notificationOccurred(.error)
-                stageScore = 0
+                GameScene.stageScore = 0
             }
             gameOver.run(actionSequence)
         }
     }
-    
+
     func moveImageView(imgView: UIImageView){
         let transition = CATransition()
         transition.duration = 1.0
@@ -113,6 +121,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMove(to view: SKView) {
+        
         physicsWorld.contactDelegate = self
         backgroundImage.inputView?.layer.contents = UIImage(named: "PrisonCell")?.cgImage
         backgroundImage.size = CGSize(width: view.frame.size.width*1.85, height: view.frame.size.height*1.85)
@@ -179,10 +188,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameMessage.setScale(0.0)
         addChild(gameMessage)
         gameState.enter(TapToPlay.self)
+        labelDelegate?.beginGame()
 //        let margins = view.layoutMarginsGuide
-        stageScoreLabel = childNode(withName: "stageScoreLabel") as! SKLabelNode
-        currentScoreLabel = childNode(withName: "currentScoreLabel") as! SKLabelNode
-        finalScoreLabel = childNode(withName: "finalScoreLabel") as! SKLabelNode
+//        stageScoreLabel = childNode(withName: "stageScoreLabel") as! SKLabelNode
+//        currentScoreLabel = childNode(withName: "currentScoreLabel") as! SKLabelNode
+//        finalScoreLabel = childNode(withName: "finalScoreLabel") as! SKLabelNode
 //        stageScoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
 //        stageScoreLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
 //        view.addSubview(stageScoreLabel)
@@ -192,9 +202,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        finalScoreLabel.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
 //        finalScoreLabel.centerYAnchor.constraint(equalTo: margins.centerYAnchor).isActive = true
 //        view.addSubview(finalScoreLabel)
-        finalScoreLabel.isHidden = true
-        stageScoreLabel.text = "Stage Score: \(stageScore)"
-        currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
+//        finalScoreLabel.isHidden = true
+//        stageScoreLabel.text = "Stage Score: \(stageScore)"
+//        currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
         
         barActionDone = false
         
@@ -333,10 +343,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard let nodeIndex = blocks.index(of: node) else {return}
         blocks.remove(at: nodeIndex)
         if node.physicsBody?.categoryBitMask == 5 {
-            stageScore+=10
+            GameScene.stageScore+=10
             GameScene.currentScore+=10
-            stageScoreLabel.text = "Stage Score: \(stageScore)"
-            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
+//            stageScoreLabel.text = "Stage Score: \(stageScore)"
+//            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
             let particles = SKEmitterNode(fileNamed: "BreakTNT")!
             particles.position = node.position
             particles.zPosition = 3
@@ -350,10 +360,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             blastRadius(node: node)
         }
         else {
-            stageScore+=50
+            GameScene.stageScore+=50
             GameScene.currentScore+=50
-            stageScoreLabel.text = "Stage Score: \(stageScore)"
-            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
+//            stageScoreLabel.text = "Stage Score: \(stageScore)"
+//            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
             let particles = SKEmitterNode(fileNamed: "BreakBrick")!
             particles.position = node.position
             particles.zPosition = 3
@@ -362,6 +372,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                              SKAction.removeFromParent()]))
         }
         node.removeFromParent()
+        labelDelegate?.updateScore()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {        
@@ -377,6 +388,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         case is GameOver:
             let newScene = GameScene(fileNamed:"GameScene")
+            let vc = self.view!.window!.rootViewController as! GameViewController
+            newScene?.labelDelegate = vc
             newScene!.scaleMode = .aspectFit
             bars.removeFromSuperview()
             winBackground.removeFromParent()
