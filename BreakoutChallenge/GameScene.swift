@@ -12,7 +12,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let BallCategory   : UInt32 = 0x1 << 0
     
-//    static let sharedInstance = GameScene()
     let GameMessageName = "gameMessage"
     var labelDelegate: RefreshLabelsDelegate?
     var ball = SKSpriteNode()
@@ -37,12 +36,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     static var difficulty = 36
     static var stageScore = 0
     static var currentScore = Int()
-//    var stageScoreLabel = SKLabelNode()
-//    var currentScoreLabel = SKLabelNode()
-//    var finalScoreLabel = SKLabelNode()
-//    var stageScoreLabel = UILabel()
-//    var currentScoreLabel = UILabel()
-//    var finalScoreLabel = UILabel()
     
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
         TapToPlay(scene: self),
@@ -63,19 +56,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         GameScene.difficulty += 9
                     }
                     bars.image = UIImage(named: "cellBars")
-//                    bars.layer.zPosition = 4
                     bars.frame.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
                     bars.contentMode = .scaleToFill
                     moveImageView(imgView: bars)
                     run(jailCell)
                     barActionDone = true
                     notification.notificationOccurred(.warning)
-//                    finalScoreLabel.text = "Final Score: \(GameScene.currentScore)"
-//                    finalScoreLabel.isHidden = false
+
                     labelDelegate?.gameIsOver()
                     GameScene.stageScore = 0
                     GameScene.currentScore = 0
-//                    self.childNode(withName: texture)?.zPosition =
                 }
             }
             else{
@@ -118,7 +108,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         transition.type = kCATransitionMoveIn
         transition.subtype = kCATransitionFromBottom
         imgView.layer.add(transition, forKey: nil)
-//        imgView.layer.zPosition = 4
         view?.addSubview(imgView)
     }
     
@@ -192,22 +181,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(gameMessage)
         gameState.enter(TapToPlay.self)
         labelDelegate?.beginGame()
-//        let margins = view.layoutMarginsGuide
-//        stageScoreLabel = childNode(withName: "stageScoreLabel") as! SKLabelNode
-//        currentScoreLabel = childNode(withName: "currentScoreLabel") as! SKLabelNode
-//        finalScoreLabel = childNode(withName: "finalScoreLabel") as! SKLabelNode
-//        stageScoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-//        stageScoreLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
-//        view.addSubview(stageScoreLabel)
-//        currentScoreLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor).isActive = true
-//        currentScoreLabel.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
-//        view.addSubview(currentScoreLabel)
-//        finalScoreLabel.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
-//        finalScoreLabel.centerYAnchor.constraint(equalTo: margins.centerYAnchor).isActive = true
-//        view.addSubview(finalScoreLabel)
-//        finalScoreLabel.isHidden = true
-//        stageScoreLabel.text = "Stage Score: \(stageScore)"
-//        currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
         
         barActionDone = false
         
@@ -348,8 +321,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if node.physicsBody?.categoryBitMask == 5 {
             GameScene.stageScore+=10
             GameScene.currentScore+=10
-//            stageScoreLabel.text = "Stage Score: \(stageScore)"
-//            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
             let particles = SKEmitterNode(fileNamed: "BreakTNT")!
             particles.position = node.position
             particles.zPosition = 3
@@ -365,8 +336,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else {
             GameScene.stageScore+=50
             GameScene.currentScore+=50
-//            stageScoreLabel.text = "Stage Score: \(stageScore)"
-//            currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
             let particles = SKEmitterNode(fileNamed: "BreakBrick")!
             particles.position = node.position
             particles.zPosition = 3
