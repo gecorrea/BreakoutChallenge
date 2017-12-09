@@ -77,6 +77,7 @@
                         <viewLayoutGuide key="safeArea" id="aqw-P4-VJ6"/>
                     </view>
                     <connections>
+                        <outlet property="checkLeaderboardButton" destination="c8e-MR-1UI" id="KlU-hj-eRU"/>
                         <outlet property="currentScoreLabel" destination="V0Q-La-Fhk" id="ZRt-va-gwq"/>
                         <outlet property="finalScoreLabel" destination="y3u-sT-KrN" id="Lqz-gM-c3S"/>
                         <outlet property="stageScoreLabel" destination="4Mw-Wj-ZEW" id="3hT-jD-aOf"/>

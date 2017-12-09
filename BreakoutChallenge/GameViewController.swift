@@ -8,6 +8,7 @@ class GameViewController: UIViewController {
     @IBOutlet weak var stageScoreLabel: UILabel!
     @IBOutlet weak var currentScoreLabel: UILabel!
     @IBOutlet weak var finalScoreLabel: UILabel!
+    @IBOutlet weak var checkLeaderboardButton: UIButton!
     
     var gcEnabled = Bool() // Check if the user has Game Center enabled
     var gcDefaultLeaderBoard = String() // Check the default leaderboardID
@@ -19,9 +20,6 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        authenticateLocalPlayer()
-        
         if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
             if let scene = GameScene(fileNamed: "GameScene") {
@@ -35,6 +33,7 @@ class GameViewController: UIViewController {
             
             view.ignoresSiblingOrder = true
         }
+        authenticateLocalPlayer()
     }
     
     // MARK: - AUTHENTICATE LOCAL PLAYER
@@ -52,7 +51,7 @@ class GameViewController: UIViewController {
                 // Get the default leaderboard ID
                 localPlayer.loadDefaultLeaderboardIdentifier(completionHandler: { (leaderboardIdentifer, error) in
                     if error != nil { print(error as Any)
-                    } else { self.gcDefaultLeaderBoard = leaderboardIdentifer! }
+                    } else { self.gcDefaultLeaderBoard = (leaderboardIdentifer)! }
                 })
                 
             } else {
@@ -106,6 +105,7 @@ extension GameViewController: RefreshLabelsDelegate {
         stageScoreLabel.text = "Stage Score: \(GameScene.stageScore)"
         currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
         finalScoreLabel.isHidden = true
+        checkLeaderboardButton.isHidden = true
     }
     
     func updateScore() {
@@ -114,9 +114,17 @@ extension GameViewController: RefreshLabelsDelegate {
     }
     
     func gameIsOver() {
+        let labels = [stageScoreLabel, currentScoreLabel, finalScoreLabel]
+        for label in labels {
+            if let subview = label {
+               view.bringSubview(toFront: subview)
+            }
+        }
         finalScoreLabel.text = "Final Score: \(GameScene.currentScore)"
-        view.bringSubview(toFront: finalScoreLabel)
+//        view.bringSubview(toFront: finalScoreLabel)
         finalScoreLabel.isHidden = false
+        view.bringSubview(toFront: checkLeaderboardButton)
+        checkLeaderboardButton.isHidden = false
         
         // Submit score to Game Center
         let bestScoreInt = GKScore(leaderboardIdentifier: LEADERBOARD_ID)
