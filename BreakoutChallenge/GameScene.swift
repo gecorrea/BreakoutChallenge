@@ -61,7 +61,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     moveImageView(imgView: bars)
                     run(jailCell)
                     barActionDone = true
-//                    notification.notificationOccurred(.warning)
+                    notification.notificationOccurred(.warning)
 
                     labelDelegate?.gameIsOver()
                     GameScene.stageScore = 0
@@ -93,8 +93,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 winBackground.size = CGSize(width: (view?.frame.size.width)!, height: (view?.frame.size.height)!)
                 winBackground.size = frame.size
                 self.insertChild(winBackground, at: 0)
-//                impact.impactOccurred()
-//                notification.notificationOccurred(.success)
+                notification.notificationOccurred(.success)
                 GameScene.stageScore = 0
             }
             gameOver.run(actionSequence)
@@ -400,8 +399,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         let actionSeq = SKAction.sequence(actionsArray);
         layer.run(actionSeq);
-//        impact.impactOccurred()
-//        notification.notificationOccurred(.success)
+        impact.impactOccurred()
     }
     
     func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
