@@ -9,9 +9,9 @@ class GameViewController: UIViewController {
     @IBOutlet weak var currentScoreLabel: UILabel!
     @IBOutlet weak var finalScoreLabel: UILabel!
     @IBOutlet weak var checkLeaderboardButton: UIButton!
-    @IBOutlet weak var jailLabel: UILabel!
-    @IBOutlet weak var breakoutLabel: UILabel!
+    @IBOutlet weak var jailBreakoutLabel: UILabel!
     @IBOutlet weak var challengeLabel: UILabel!
+    @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var playButton: UIButton!
     
     var gcEnabled = Bool() // Check if the user has Game Center enabled
@@ -21,13 +21,13 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        [stageScoreLabel, currentScoreLabel, finalScoreLabel].forEach{$0?.isHidden = true}
+        [stageScoreLabel, currentScoreLabel, finalScoreLabel].forEach { $0?.isHidden = true }
         checkLeaderboardButton.isHidden = true
         authenticateLocalPlayer()
     }
     
     @IBAction func playButtonTouched(_ sender: UIButton) {
-        [jailLabel, breakoutLabel, challengeLabel].forEach{$0?.isHidden = true}
+        [jailBreakoutLabel, challengeLabel, backgroundView].forEach { $0?.isHidden = true }
         playButton.isHidden = true
         if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
@@ -48,7 +48,7 @@ class GameViewController: UIViewController {
     func authenticateLocalPlayer() {
         let localPlayer: GKLocalPlayer = GKLocalPlayer.localPlayer()
         
-        localPlayer.authenticateHandler = {(ViewController, error) -> Void in
+        localPlayer.authenticateHandler = { (ViewController, error) -> Void in
             if((ViewController) != nil) {
                 // 1. Show login if player is not logged in
                 self.present(ViewController!, animated: true, completion: nil)
@@ -109,7 +109,7 @@ extension GameViewController: GKGameCenterControllerDelegate {
 
 extension GameViewController: RefreshLabelsDelegate {
     func beginGame() {
-        [stageScoreLabel, currentScoreLabel].forEach{$0?.isHidden = false}
+        [stageScoreLabel, currentScoreLabel].forEach { $0?.isHidden = false }
         stageScoreLabel.text = "Stage Score: \(GameScene.stageScore)"
         currentScoreLabel.text = "Current Score: \(GameScene.currentScore)"
         finalScoreLabel.isHidden = true
@@ -122,7 +122,7 @@ extension GameViewController: RefreshLabelsDelegate {
     }
     
     func gameIsOver() {
-        [stageScoreLabel, currentScoreLabel, finalScoreLabel].forEach { (label) in
+        [stageScoreLabel, currentScoreLabel, finalScoreLabel].forEach { label in
             if let subview = label {
                 view.bringSubview(toFront: subview)
             }
@@ -135,7 +135,7 @@ extension GameViewController: RefreshLabelsDelegate {
         // Submit score to Game Center
         let bestScoreInt = GKScore(leaderboardIdentifier: LEADERBOARD_ID)
         bestScoreInt.value = Int64(GameScene.currentScore)
-        GKScore.report([bestScoreInt]) { (error) in
+        GKScore.report([bestScoreInt]) { error in
             if error != nil {
                 print(error!.localizedDescription)
             } else {

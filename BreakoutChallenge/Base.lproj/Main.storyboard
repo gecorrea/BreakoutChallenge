@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment version="4384" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="MarkerFeltThin.ttf">
-            <string>MarkerFelt-Thin</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
@@ -25,6 +20,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MA0-tG-RbK">
+                                <rect key="frame" x="0.0" y="44" width="375" height="734"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stage Score:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Mw-Wj-ZEW">
                                 <rect key="frame" x="26" y="734" width="150" height="24"/>
                                 <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="20"/>
@@ -59,20 +58,14 @@
                                     <action selector="checkLeaderboard:" destination="BV1-FR-VrT" eventType="touchUpInside" id="yVd-ZI-R3d"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MY8-7z-8RZ">
-                                <rect key="frame" x="167" y="144" width="41" height="30.666666666666657"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jail Breakout" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MY8-7z-8RZ">
+                                <rect key="frame" x="111.33333333333333" y="144" width="152.33333333333337" height="30.666666666666657"/>
                                 <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="28"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Breakout" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f5E-av-ARg">
-                                <rect key="frame" x="135" y="199" width="104.66666666666669" height="30.666666666666657"/>
-                                <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="28"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Challenge" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7dO-CV-qRW">
-                                <rect key="frame" x="132" y="254.99999999999997" width="110" height="30.666666666666657"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Challenge" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f5E-av-ARg">
+                                <rect key="frame" x="132.33333333333334" y="199" width="110" height="30.666666666666657"/>
                                 <fontDescription key="fontDescription" name="MarkerFelt-Thin" family="Marker Felt" pointSize="28"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -94,38 +87,40 @@
                             <constraint firstItem="y3u-sT-KrN" firstAttribute="centerX" secondItem="aqw-P4-VJ6" secondAttribute="centerX" id="0Qz-Oa-Ebd"/>
                             <constraint firstItem="MY8-7z-8RZ" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="4VT-5z-8mb"/>
                             <constraint firstItem="WW7-vd-V5U" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="5g4-Nu-tCs"/>
+                            <constraint firstItem="MA0-tG-RbK" firstAttribute="trailing" secondItem="aqw-P4-VJ6" secondAttribute="trailing" id="Hct-ho-fGH"/>
                             <constraint firstItem="4Mw-Wj-ZEW" firstAttribute="width" secondItem="3se-qz-xqx" secondAttribute="width" multiplier="2:5" id="JrX-GL-chw"/>
+                            <constraint firstItem="WW7-vd-V5U" firstAttribute="top" secondItem="f5E-av-ARg" secondAttribute="bottom" constant="156.33333333333334" id="OoY-Lb-EmG"/>
                             <constraint firstItem="4Mw-Wj-ZEW" firstAttribute="top" secondItem="y3u-sT-KrN" secondAttribute="bottom" constant="100" id="Pxs-SQ-iee"/>
                             <constraint firstItem="f5E-av-ARg" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="QzZ-wO-pWM"/>
                             <constraint firstItem="V0Q-La-Fhk" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailingMargin" constant="10" id="Vpn-GR-zgd"/>
+                            <constraint firstItem="MA0-tG-RbK" firstAttribute="bottom" secondItem="aqw-P4-VJ6" secondAttribute="bottom" id="ZLw-SB-TAf"/>
                             <constraint firstItem="c8e-MR-1UI" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="a59-A6-UTN"/>
-                            <constraint firstItem="7dO-CV-qRW" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="aE7-pO-4mD"/>
                             <constraint firstItem="V0Q-La-Fhk" firstAttribute="width" secondItem="4Mw-Wj-ZEW" secondAttribute="width" id="c8D-FE-et9"/>
                             <constraint firstItem="aqw-P4-VJ6" firstAttribute="bottom" secondItem="4Mw-Wj-ZEW" secondAttribute="bottom" constant="20" id="dZQ-Gy-Fx2"/>
                             <constraint firstItem="y3u-sT-KrN" firstAttribute="top" secondItem="c8e-MR-1UI" secondAttribute="bottom" constant="100" id="fHh-9f-WUi"/>
                             <constraint firstItem="f5E-av-ARg" firstAttribute="top" secondItem="MY8-7z-8RZ" secondAttribute="bottom" constant="25" id="fN2-Fe-TwS"/>
                             <constraint firstItem="aqw-P4-VJ6" firstAttribute="bottom" secondItem="V0Q-La-Fhk" secondAttribute="bottom" constant="20" id="fN6-7p-Mg4"/>
-                            <constraint firstItem="WW7-vd-V5U" firstAttribute="top" secondItem="7dO-CV-qRW" secondAttribute="bottom" constant="100" id="fYz-X8-z8b"/>
                             <constraint firstItem="MY8-7z-8RZ" firstAttribute="top" secondItem="aqw-P4-VJ6" secondAttribute="top" constant="100" id="iYt-RO-v41"/>
+                            <constraint firstItem="MA0-tG-RbK" firstAttribute="top" secondItem="aqw-P4-VJ6" secondAttribute="top" id="jrm-x0-Os3"/>
+                            <constraint firstItem="MA0-tG-RbK" firstAttribute="leading" secondItem="aqw-P4-VJ6" secondAttribute="leading" id="jxZ-if-XRg"/>
                             <constraint firstItem="4Mw-Wj-ZEW" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leadingMargin" constant="10" id="ou1-HW-H3O"/>
-                            <constraint firstItem="7dO-CV-qRW" firstAttribute="top" secondItem="f5E-av-ARg" secondAttribute="bottom" constant="25" id="wuO-Nh-rb9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="aqw-P4-VJ6"/>
                     </view>
                     <connections>
-                        <outlet property="breakoutLabel" destination="f5E-av-ARg" id="JOm-xo-eDL"/>
-                        <outlet property="challengeLabel" destination="7dO-CV-qRW" id="8cU-B2-VhI"/>
+                        <outlet property="backgroundView" destination="MA0-tG-RbK" id="XHv-qY-a1r"/>
+                        <outlet property="challengeLabel" destination="f5E-av-ARg" id="6La-6w-Y3r"/>
                         <outlet property="checkLeaderboardButton" destination="c8e-MR-1UI" id="KlU-hj-eRU"/>
                         <outlet property="currentScoreLabel" destination="V0Q-La-Fhk" id="ZRt-va-gwq"/>
                         <outlet property="finalScoreLabel" destination="y3u-sT-KrN" id="Lqz-gM-c3S"/>
-                        <outlet property="jailLabel" destination="MY8-7z-8RZ" id="kPs-Cm-dpa"/>
+                        <outlet property="jailBreakoutLabel" destination="MY8-7z-8RZ" id="Rv9-ep-79T"/>
                         <outlet property="playButton" destination="WW7-vd-V5U" id="PUZ-LL-cG3"/>
                         <outlet property="stageScoreLabel" destination="4Mw-Wj-ZEW" id="3hT-jD-aOf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.5" y="138.5"/>
+            <point key="canvasLocation" x="135.19999999999999" y="138.17733990147784"/>
         </scene>
     </scenes>
 </document>
