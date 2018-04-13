@@ -146,9 +146,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
         ball.physicsBody?.categoryBitMask = 2
-        ball.position = CGPoint(x: 0, y: -(view.frame.size.height)*3/10)
+        ball.position = CGPoint(x: 0, y: -(view.frame.size.height) * 3/10)
         ball.zPosition = 1
-        ball.physicsBody!.categoryBitMask = BallCategory
+        ball.physicsBody?.categoryBitMask = BallCategory
         
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
@@ -296,11 +296,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let center = node.index
         for block in blocks{
             switch true {
-            case block.index == center - 1 || block.index == center + 6 || block.index == center - 8 && block.index % 7 != 6:
-                breakBlock(node: block)
+            case block.index == center - 1 || block.index == center + 6 || block.index == center - 8:
+                if block.index % 7 != 6 {
+                    breakBlock(node: block)
+                }
                 continue
-            case block.index == center + 1 || block.index == center - 6 || block.index == center + 8 && block.index % 7 != 0:
-                breakBlock(node: block)
+            case block.index == center + 1 || block.index == center - 6 || block.index == center + 8:
+                if block.index % 7 != 0 {
+                    breakBlock(node: block)
+                }
                 continue
             case block.index == center - 7 || block.index == center + 7:
                 breakBlock(node: block)
@@ -339,6 +343,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             particles.run(SKAction.sequence([SKAction.wait(forDuration: 2),
                                              SKAction.removeFromParent()]))
         }
+
         node.removeFromParent()
         labelDelegate?.updateScore()
     }
