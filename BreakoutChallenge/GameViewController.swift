@@ -16,10 +16,7 @@ class GameViewController: UIViewController {
     
     var gcEnabled = Bool() // Check if the user has Game Center enabled
     var gcDefaultLeaderBoard = String() // Check the default leaderboardID
-    
-//    var score = 0
-    
-    // IMPORTANT: replace the red string below with your own Leaderboard ID (the one you've set in iTunes Connect)
+
     let LEADERBOARD_ID = "com.score.BreakoutChallenge"
     
     override func viewDidLoad() {
@@ -97,11 +94,6 @@ class GameViewController: UIViewController {
         } else {
             return .all
         }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
     }
 
     override var prefersStatusBarHidden: Bool {
