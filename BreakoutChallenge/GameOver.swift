@@ -10,26 +10,30 @@ import Foundation
 import SpriteKit
 import GameplayKit
 
-class GameOver: GKState {
+final class GameOver: GKState {
     unowned let scene: GameScene
-    
+
     init(scene: SKScene) {
-        self.scene = scene as! GameScene
+        guard let scene = scene as? GameScene else {
+            fatalError("Error setting scene as GameScene in GameOver.")
+        }
+        self.scene = scene
         super.init()
     }
-    
-    override func didEnter(from previousState: GKState?) {
+
+    internal override func didEnter(from previousState: GKState?) {
         if previousState is Playing {
-            let ball = scene.childNode(withName: "ball") as! SKSpriteNode
+            guard let ball = scene.childNode(withName: "ball") as? SKSpriteNode else {
+                fatalError("Error locating ball in GameScene for GameOver.")
+            }
             ball.physicsBody!.linearDamping = 1.0
             ball.physicsBody?.affectedByGravity = true
             ball.physicsBody?.restitution = 0
             scene.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
         }
     }
-    
-    override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+
+    internal override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         return stateClass is TapToPlay.Type
     }
-
 }

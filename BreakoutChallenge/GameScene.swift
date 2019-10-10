@@ -8,11 +8,9 @@ protocol RefreshLabelsDelegate {
     func gameIsOver()
 }
 
-class GameScene: SKScene, SKPhysicsContactDelegate {
-    
-    let BallCategory   : UInt32 = 0x1 << 0
-    
-    let GameMessageName = "gameMessage"
+final class GameScene: SKScene {
+    let ballCategory: UInt32 = 0x1 << 0
+    let gameMessageName = "gameMessage"
     var labelDelegate: RefreshLabelsDelegate?
     var ball = SKSpriteNode()
     var paddle = SKSpriteNode()
@@ -104,7 +102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    func moveImageView(imgView: UIImageView) {
+    private func moveImageView(imgView: UIImageView) {
         let transition = CATransition()
         transition.duration = 1.0
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -113,17 +111,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         imgView.layer.add(transition, forKey: nil)
         view?.addSubview(imgView)
     }
-    
-    override func didMove(to view: SKView) {
-        
+
+    internal override func didMove(to view: SKView) {
         physicsWorld.contactDelegate = self
         backgroundImage.inputView?.layer.contents = UIImage(named: "PrisonCell")?.cgImage
         backgroundImage.size = CGSize(width: view.frame.size.width, height: view.frame.size.height)
         backgroundImage.size = frame.size
         self.insertChild(backgroundImage, at: 0)
-        
+
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
-        
+
         paddle.texture = nil
         paddle.color = UIColor.orange
         paddle.size = CGSize(width: 200, height: 30)
@@ -141,23 +138,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let range = SKRange(lowerLimit: backgroundImage.frame.minX + 100, upperLimit: backgroundImage.frame.maxX - 100)
         let constraint = SKConstraint.positionX(range)
         paddle.constraints = [constraint]
-        
+
         ball = self.childNode(withName: "ball") as! SKSpriteNode
         ball.physicsBody?.collisionBitMask = 1
         ball.physicsBody?.contactTestBitMask = 1
         ball.physicsBody?.categoryBitMask = 2
         ball.position = CGPoint(x: 0, y: -(view.frame.size.height) * 3/10)
         ball.zPosition = 1
-        ball.physicsBody?.categoryBitMask = BallCategory
-        
+        ball.physicsBody?.categoryBitMask = ballCategory
+
         bottom = self.childNode(withName: "bottom") as! SKSpriteNode
         bottom.zPosition = 1
-        
+
         let border = SKPhysicsBody(edgeLoopFrom: self.frame)
         border.friction = 0
         border.restitution = 1
         self.physicsBody = border
-        
+
         // setup rows array
         var i = upperBound
         repeat {
@@ -165,9 +162,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             rows.append(newFloat)
             i -= 55
         } while i >= ((upperBound/2) - 10)
-        
         makeBricks()
-        
+
         // setup winRows array
         i = upperBound
         repeat {
@@ -229,8 +225,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
-    func standardBlockProperties(block: Block) {
+
+    private func standardBlockProperties(block: Block) {
         block.physicsBody = SKPhysicsBody(rectangleOf: block.frame.size)
         block.physicsBody?.allowsRotation = false
         block.physicsBody?.friction = 0.0
@@ -243,8 +239,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(block)
         blocks.append(block)
     }
-    
-    func blastRadius(node: Block) {
+
+    private func blastRadius(node: Block) {
         let center = node.index
         for block in blocks{
             switch true {
@@ -266,8 +262,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
-    func breakBlock(node: Block) {
+
+    private func breakBlock(node: Block) {
         guard let nodeIndex = blocks.index(of: node) else { return }
         blocks.remove(at: nodeIndex)
         if node.physicsBody?.categoryBitMask == 5 {
@@ -299,18 +295,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         node.removeFromParent()
         labelDelegate?.updateScore()
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {        
+
+    internal override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         switch gameState.currentState {
         case is TapToPlay:
             gameState.enter(Playing.self)
-            
+
         case is Playing:
             for touch in touches {
                 let location = touch.location(in: self)
                 paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
             }
-            
+
         case is GameOver:
             guard let newScene = GameScene(fileNamed:"GameScene"),
                 let viewWindow = view?.window else { return }
@@ -321,24 +317,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             winBackground.removeFromParent()
             let reveal = SKTransition.flipHorizontal(withDuration: 0.5)
             self.view?.presentScene(newScene, transition: reveal)
-            
+
         default:
             break
         }
     }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+    internal override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch.location(in: self)
             paddle.run(SKAction.moveTo(x: location.x, duration: 0.2))
         }
     }
-    
-    func isGameWon() -> Bool {
+
+    private func isGameWon() -> Bool {
         return blocks.count == 0
     }
-    
-    func shakeCamera(layer:SKSpriteNode, duration:Float) {
+
+    private func shakeCamera(layer:SKSpriteNode, duration:Float) {
         let amplitudeX:Float = 10;
         let amplitudeY:Float = 6;
         let numberOfShakes = duration / 0.04;
@@ -355,13 +351,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         layer.run(actionSeq);
         impact.impactOccurred()
     }
-    
-    func randomFloat(from:CGFloat, to:CGFloat) -> CGFloat {
-        let rand:CGFloat = CGFloat(Float(arc4random()) / 0xFFFFFFFF)
-        return (rand) * (to - from) + from
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+}
+
+extension GameScene: SKPhysicsContactDelegate {
+    public func didBegin(_ contact: SKPhysicsContact) {
+        var firstBody: SKPhysicsBody
+        var secondBody: SKPhysicsBody
+
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+
+        switch true {
+        case firstBody.categoryBitMask == ballCategory && secondBody.categoryBitMask == 3:
+            guard let node = secondBody.node else {return}
+            breakBlock(node: node as! Block)
+            if isGameWon() {
+                gameState.enter(GameOver.self)
+                gameWon = true
+            }
+            break
+
+        case firstBody.categoryBitMask == ballCategory && secondBody == bottom.physicsBody:
+            gameState.enter(GameOver.self)
+            if blocks.count > 0 {
+                gameWon = false
+            }
+            break
+
+        case firstBody.categoryBitMask == ballCategory && secondBody.categoryBitMask == 5:
+            guard let node = secondBody.node else {return}
+            breakBlock(node: node as! Block)
+            run(explosion)
+            if isGameWon() {
+                gameState.enter(GameOver.self)
+                gameWon = true
+            }
+            break
+
+        case (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody:
+            ball.physicsBody?.isResting = true
+            gameState.update(deltaTime: 0)
+            break
+
+        default:
+            break
+        }
     }
 }

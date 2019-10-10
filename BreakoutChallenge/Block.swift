@@ -1,6 +1,6 @@
 import SpriteKit
 
-class Block: SKSpriteNode {
+final class Block: SKSpriteNode {
 
     var index: Int
 
@@ -9,7 +9,6 @@ class Block: SKSpriteNode {
     }
     
     init(index: Int, size: CGSize, texture: SKTexture) {
-        // public init(texture: SKTexture?, color: UIColor, size: CGSize)
         self.index = index
         super.init(texture: texture, color: .clear, size: size)
     }

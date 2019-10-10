@@ -3,7 +3,7 @@ import SpriteKit
 import GameplayKit
 import GameKit
 
-class GameViewController: UIViewController {
+final class GameViewController: UIViewController {
     
     @IBOutlet weak var stageScoreLabel: UILabel!
     @IBOutlet weak var currentScoreLabel: UILabel!
@@ -21,6 +21,7 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .black
         [stageScoreLabel, currentScoreLabel, finalScoreLabel].forEach { $0?.isHidden = true }
         checkLeaderboardButton.isHidden = true
         authenticateLocalPlayer()
@@ -29,18 +30,13 @@ class GameViewController: UIViewController {
     @IBAction func playButtonTouched(_ sender: UIButton) {
         [jailBreakoutLabel, challengeLabel, backgroundView].forEach { $0?.isHidden = true }
         playButton.isHidden = true
-        if let view = self.view as! SKView? {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = GameScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFit
-                scene.labelDelegate = self
-                
-                // Present the scene
-                view.presentScene(scene)
-            }
-            view.ignoresSiblingOrder = true
-        }
+        guard let view = self.view as? SKView,
+            let  scene = GameScene(fileNamed: "GameScene") else { return }
+        scene.scaleMode = .aspectFit
+        scene.view?.bounds = view.bounds
+        scene.labelDelegate = self
+        view.presentScene(scene)
+        view.ignoresSiblingOrder = true
     }
     
     
@@ -50,10 +46,8 @@ class GameViewController: UIViewController {
         
         localPlayer.authenticateHandler = { (ViewController, error) -> Void in
             if((ViewController) != nil) {
-                // 1. Show login if player is not logged in
                 self.present(ViewController!, animated: true, completion: nil)
             } else if (localPlayer.isAuthenticated) {
-                // 2. Player is already authenticated & logged in, load game center
                 self.gcEnabled = true
                 
                 // Get the default leaderboard ID
@@ -67,7 +61,6 @@ class GameViewController: UIViewController {
                 })
                 
             } else {
-                // 3. Game center is not enabled on the users device
                 self.gcEnabled = false
                 print("Local player could not be authenticated!")
                 print(error as Any)
@@ -137,7 +130,10 @@ extension GameViewController: RefreshLabelsDelegate {
         bestScoreInt.value = Int64(GameScene.currentScore)
         GKScore.report([bestScoreInt]) { error in
             if error != nil {
-                print(error!.localizedDescription)
+                guard let error = error else {
+                    fatalError("Fatal error in GameViewController while getting error message.")
+                }
+                print(error.localizedDescription)
             } else {
                 print("Best Score submitted to your Leaderboard!")
             }
