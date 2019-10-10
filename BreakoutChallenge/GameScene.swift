@@ -31,25 +31,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let bgMusic = NSURL(fileURLWithPath:Bundle.main.path(forResource:"mouse_trap", ofType: "mp3")!)
     let explosion = SKAction.playSoundFileNamed("explosion", waitForCompletion: false)
     let jailCell = SKAction.playSoundFileNamed("jail_cell_door", waitForCompletion: false)
-    var audioPlayer = AVAudioPlayer()
+    var audioPlayer: AVAudioPlayer!
     var barActionDone = Bool()
     static var difficulty = 36
     static var stageScore = 0
     static var currentScore = Int()
-    
+
     lazy var gameState: GKStateMachine = GKStateMachine(states: [
         TapToPlay(scene: self),
         Playing(scene: self),
         GameOver(scene: self)])
-    
+
     var gameWon : Bool = false {
         didSet {
-            let gameOver = childNode(withName: GameMessageName) as! SKSpriteNode
+            let gameOver = childNode(withName: gameMessageName) as! SKSpriteNode
             let textureName = gameWon ? "YouWon" : "GameOver"
             let texture = SKTexture(imageNamed: textureName)
             let actionSequence = SKAction.sequence([SKAction.setTexture(texture),
-                                                    SKAction.scale(to: 1.0, duration: 0.25)])
-            
+                                                    SKAction.scale(to: 1.0,
+                                                                   duration: 0.25)])
             if textureName == "GameOver" {
                 if barActionDone == false {
                     if GameScene.difficulty < 99 {
@@ -175,74 +175,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             winRows.append(newFloat)
             i -= 55
         } while i >= lowerBound
-        
+
         let gameMessage = SKSpriteNode(imageNamed: "TapToPlay")
-        gameMessage.name = GameMessageName
+        gameMessage.name = gameMessageName
         gameMessage.position = CGPoint(x: frame.midX, y: frame.midY)
         gameMessage.zPosition = 5
         gameMessage.setScale(0.0)
         addChild(gameMessage)
         gameState.enter(TapToPlay.self)
         labelDelegate?.beginGame()
-        
+
         barActionDone = false
-        
-        audioPlayer = try! AVAudioPlayer(contentsOf: bgMusic as URL)
-        audioPlayer.prepareToPlay()
-        audioPlayer.play()
-        audioPlayer.numberOfLoops = -1
-    }
-    
-    func didBegin(_ contact: SKPhysicsContact) {
-        var firstBody: SKPhysicsBody
-        var secondBody: SKPhysicsBody
-        
-        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
-            firstBody = contact.bodyA
-            secondBody = contact.bodyB
-        } else {
-            firstBody = contact.bodyB
-            secondBody = contact.bodyA
-        }
-        
-        switch true {
-        case firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 3:
-            guard let node = secondBody.node else {return}
-            breakBlock(node: node as! Block)
-            if isGameWon() {
-                gameState.enter(GameOver.self)
-                gameWon = true
-            }
-            break
-            
-        case firstBody.categoryBitMask == BallCategory && secondBody == bottom.physicsBody:
-            gameState.enter(GameOver.self)
-            if blocks.count > 0 {
-                gameWon = false
-            }
-            break
-            
-        case firstBody.categoryBitMask == BallCategory && secondBody.categoryBitMask == 5:
-            guard let node = secondBody.node else {return}
-            breakBlock(node: node as! Block)
-            run(explosion)
-            if isGameWon() {
-                gameState.enter(GameOver.self)
-                gameWon = true
-            }
-            break
-            
-        case (ball.physicsBody?.velocity.dx == 0 || ball.physicsBody?.velocity.dy == 0) && secondBody != bottom.physicsBody:
-            ball.physicsBody?.isResting = true
-            gameState.update(deltaTime: 0)
-            break
-            
-        default:
-            break
+        DispatchQueue.main.async {
+            self.audioPlayer = try! AVAudioPlayer(contentsOf: self.bgMusic as URL)
+            self.audioPlayer.prepareToPlay()
+            self.audioPlayer.play()
+            self.audioPlayer.numberOfLoops = -1
         }
     }
-    
-    func makeBricks(){
+
+    private func makeBricks(){
         for row in rows {
             for i in 0...6 {
                 let rand = Int(arc4random_uniform(2))
